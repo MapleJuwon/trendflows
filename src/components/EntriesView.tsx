@@ -94,6 +94,10 @@ export default function EntriesView({ refreshKey }: Props) {
           </div>
         ))}
       </div>
+
+      {activeId && (
+        <AddEntrySheet collectionId={activeId} open={showAddEntry} onOpenChange={setShowAddEntry} />
+      )}
     </div>
   );
 }
