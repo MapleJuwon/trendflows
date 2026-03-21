@@ -14,6 +14,7 @@ export default function EntriesView({ refreshKey }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [showAddEntry, setShowAddEntry] = useState(false);
 
   useEffect(() => {
     const cols = getCollections().filter(c => !c.archived);
