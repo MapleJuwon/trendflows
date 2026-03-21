@@ -60,7 +60,6 @@ export default function EntriesView({ refreshKey }: Props) {
             </button>
           )}
         </div>
-        </button>
       </div>
 
       {showSearch && (
