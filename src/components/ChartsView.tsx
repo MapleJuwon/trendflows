@@ -1,7 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { getCollections, getStats, type DataCollection } from "@/lib/store";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import { Plus } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import AddEntrySheet from "./AddEntrySheet";
 
 interface Props {
   selectedId?: string | null;
@@ -21,6 +23,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   const [collections, setCollections] = useState<DataCollection[]>([]);
   const [activeId, setActiveId] = useState<string | null>(selectedId ?? null);
   const [rangeIdx, setRangeIdx] = useState(1);
+  const [showAddEntry, setShowAddEntry] = useState(false);
 
   useEffect(() => {
     const cols = getCollections().filter(c => !c.archived && c.entries.length > 0);
@@ -60,7 +63,14 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
 
   return (
     <div className="px-5 pt-3 pb-24">
-      <h1 className="text-2xl text-display text-foreground mb-4 animate-fade-up">{t("charts.title")}</h1>
+      <div className="flex items-center justify-between mb-4 animate-fade-up">
+        <h1 className="text-2xl text-display text-foreground">{t("charts.title")}</h1>
+        {activeId && (
+          <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
+            <Plus className="w-4 h-4 text-primary-foreground" />
+          </button>
+        )}
+      </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-4 animate-fade-up" style={{ animationDelay: "80ms" }}>
         {collections.map(c => (
@@ -131,6 +141,10 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
             </div>
           )}
         </>
+      )}
+
+      {activeId && (
+        <AddEntrySheet collectionId={activeId} open={showAddEntry} onOpenChange={setShowAddEntry} />
       )}
     </div>
   );

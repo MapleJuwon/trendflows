@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { getCollections, deleteEntry, type DataCollection } from "@/lib/store";
-import { Trash2, Search } from "lucide-react";
+import { Trash2, Search, Plus } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import AddEntrySheet from "./AddEntrySheet";
 
 interface Props {
   refreshKey: number;
@@ -13,6 +14,7 @@ export default function EntriesView({ refreshKey }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [showAddEntry, setShowAddEntry] = useState(false);
 
   useEffect(() => {
     const cols = getCollections().filter(c => !c.archived);
@@ -48,9 +50,16 @@ export default function EntriesView({ refreshKey }: Props) {
     <div className="px-5 pt-3 pb-24">
       <div className="flex items-center justify-between mb-4 animate-fade-up">
         <h1 className="text-2xl text-display text-foreground">{t("entries.title")}</h1>
-        <button onClick={() => setShowSearch(!showSearch)} className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform">
-          <Search className="w-4 h-4 text-muted-foreground" />
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setShowSearch(!showSearch)} className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform">
+            <Search className="w-4 h-4 text-muted-foreground" />
+          </button>
+          {activeId && (
+            <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
+              <Plus className="w-4 h-4 text-primary-foreground" />
+            </button>
+          )}
+        </div>
       </div>
 
       {showSearch && (
@@ -85,6 +94,10 @@ export default function EntriesView({ refreshKey }: Props) {
           </div>
         ))}
       </div>
+
+      {activeId && (
+        <AddEntrySheet collectionId={activeId} open={showAddEntry} onOpenChange={setShowAddEntry} />
+      )}
     </div>
   );
 }
