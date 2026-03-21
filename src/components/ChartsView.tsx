@@ -1,8 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { getCollections, getStats, type DataCollection } from "@/lib/store";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { Plus } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceDot } from "recharts";
+import { Plus, CalendarIcon } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { format } from "date-fns";
+import { de, enUS } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import AddEntrySheet from "./AddEntrySheet";
 
 interface Props {
@@ -24,7 +29,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   const [activeId, setActiveId] = useState<string | null>(selectedId ?? null);
   const [rangeIdx, setRangeIdx] = useState(1);
   const [showAddEntry, setShowAddEntry] = useState(false);
-
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   useEffect(() => {
     const cols = getCollections().filter(c => !c.archived && c.entries.length > 0);
     setCollections(cols);
@@ -45,11 +50,20 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
     return col.entries.filter(e => e.date >= cutoffStr);
   }, [col, rangeIdx]);
 
-  const locale = lang === "de" ? "de-DE" : "en-US";
+  const dateLocale = lang === "de" ? de : enUS;
+  const localeStr = lang === "de" ? "de-DE" : "en-US";
   const chartData = filteredEntries.map(e => ({
-    date: new Date(e.date).toLocaleDateString(locale, { day: "numeric", month: "short" }),
+    date: new Date(e.date).toLocaleDateString(localeStr, { day: "numeric", month: "short" }),
+    rawDate: e.date,
     value: e.value,
   }));
+
+  const selectedEntry = selectedDate
+    ? filteredEntries.find(e => e.date === selectedDate.toISOString().split("T")[0])
+    : null;
+  const selectedChartIdx = selectedDate
+    ? chartData.findIndex(d => d.rawDate === selectedDate.toISOString().split("T")[0])
+    : -1;
 
   const stats = col ? getStats(filteredEntries) : null;
 
@@ -65,11 +79,36 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
     <div className="px-5 pt-3 pb-24">
       <div className="flex items-center justify-between mb-4 animate-fade-up">
         <h1 className="text-2xl text-display text-foreground">{t("charts.title")}</h1>
-        {activeId && (
-          <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
-            <Plus className="w-4 h-4 text-primary-foreground" />
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {activeId && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className={cn(
+                  "h-9 px-3 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-all active:scale-95",
+                  selectedDate ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                )}>
+                  <CalendarIcon className="w-3.5 h-3.5" />
+                  {selectedDate ? format(selectedDate, "d. MMM", { locale: dateLocale }) : t("charts.pickDate")}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(d) => setSelectedDate(d)}
+                  locale={dateLocale}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          )}
+          {activeId && (
+            <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
+              <Plus className="w-4 h-4 text-primary-foreground" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-4 animate-fade-up" style={{ animationDelay: "80ms" }}>
@@ -115,6 +154,10 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
                     )}
                     <Area type="monotone" dataKey="value" stroke={col.color} strokeWidth={2.5} fill={`url(#grad-${col.id})`}
                       dot={{ r: 3, fill: col.color, strokeWidth: 0 }} activeDot={{ r: 5, fill: col.color, strokeWidth: 2, stroke: "hsl(var(--card))" }} />
+                    {selectedChartIdx >= 0 && selectedEntry && (
+                      <ReferenceDot x={chartData[selectedChartIdx].date} y={selectedEntry.value}
+                        r={7} fill={col.color} stroke="hsl(var(--card))" strokeWidth={3} />
+                    )}
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -122,6 +165,21 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
               <p className="text-center text-muted-foreground text-sm py-10">{t("charts.noRange")}</p>
             )}
           </div>
+
+          {selectedEntry && col && (
+            <div className="bg-card rounded-2xl p-4 card-shadow mb-5 animate-fade-up flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground mb-0.5">{t("charts.selectedDay")}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {format(selectedDate!, "d. MMMM yyyy", { locale: dateLocale })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-foreground tabular-nums">{selectedEntry.value}</p>
+                <p className="text-xs text-muted-foreground">{col.unit}</p>
+              </div>
+            </div>
+          )}
 
           {stats && (
             <div className="grid grid-cols-2 gap-3 animate-fade-up" style={{ animationDelay: "320ms" }}>
