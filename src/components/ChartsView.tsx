@@ -1,7 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { getCollections, getStats, type DataCollection } from "@/lib/store";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import { Plus } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import AddEntrySheet from "./AddEntrySheet";
 
 interface Props {
   selectedId?: string | null;
