@@ -290,7 +290,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   };
 
   const t = (key: TranslationKey, params?: Record<string, string | number>): string => {
-    let text = translations[lang][key] || translations.de[key] || key;
+    let text: string = translations[lang][key] || translations.de[key] || key;
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         text = text.replace(`{${k}}`, String(v));
