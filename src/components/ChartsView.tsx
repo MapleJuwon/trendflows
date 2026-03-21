@@ -154,6 +154,10 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
                     )}
                     <Area type="monotone" dataKey="value" stroke={col.color} strokeWidth={2.5} fill={`url(#grad-${col.id})`}
                       dot={{ r: 3, fill: col.color, strokeWidth: 0 }} activeDot={{ r: 5, fill: col.color, strokeWidth: 2, stroke: "hsl(var(--card))" }} />
+                    {selectedChartIdx >= 0 && selectedEntry && (
+                      <ReferenceDot x={chartData[selectedChartIdx].date} y={selectedEntry.value}
+                        r={7} fill={col.color} stroke="hsl(var(--card))" strokeWidth={3} />
+                    )}
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -161,6 +165,21 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
               <p className="text-center text-muted-foreground text-sm py-10">{t("charts.noRange")}</p>
             )}
           </div>
+
+          {selectedEntry && col && (
+            <div className="bg-card rounded-2xl p-4 card-shadow mb-5 animate-fade-up flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground mb-0.5">{t("charts.selectedDay")}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {format(selectedDate!, "d. MMMM yyyy", { locale: dateLocale })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-foreground tabular-nums">{selectedEntry.value}</p>
+                <p className="text-xs text-muted-foreground">{col.unit}</p>
+              </div>
+            </div>
+          )}
 
           {stats && (
             <div className="grid grid-cols-2 gap-3 animate-fade-up" style={{ animationDelay: "320ms" }}>
