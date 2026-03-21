@@ -1,8 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { getCollections, getStats, type DataCollection } from "@/lib/store";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { Plus } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceDot } from "recharts";
+import { Plus, CalendarIcon } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { format } from "date-fns";
+import { de, enUS } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import AddEntrySheet from "./AddEntrySheet";
 
 interface Props {
