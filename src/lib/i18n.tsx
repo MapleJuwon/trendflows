@@ -32,8 +32,6 @@ const translations = {
     "charts.all": "Alle",
     "charts.pickDate": "Tag wählen",
     "charts.selectedDay": "Ausgewählter Tag",
-    "charts.pickDate": "Tag wählen",
-    "charts.selectedDay": "Ausgewählter Tag",
     // Entries
     "entries.title": "Einträge",
     "entries.empty": "Noch keine Einträge.",
