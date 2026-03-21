@@ -171,8 +171,6 @@ const translations = {
     "charts.all": "All",
     "charts.pickDate": "Pick day",
     "charts.selectedDay": "Selected day",
-    "charts.pickDate": "Pick day",
-    "charts.selectedDay": "Selected day",
     "entries.title": "Entries",
     "entries.empty": "No entries yet.",
     "entries.notFound": "No entries found.",
