@@ -1,0 +1,80 @@
+import { useState } from "react";
+import { addEntry } from "@/lib/store";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+
+interface Props {
+  collectionId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export default function AddEntrySheet({ collectionId, open, onOpenChange }: Props) {
+  const today = new Date().toISOString().split("T")[0];
+  const [date, setDate] = useState(today);
+  const [value, setValue] = useState("");
+  const [note, setNote] = useState("");
+
+  const handleSave = () => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return;
+    addEntry(collectionId, date, num, note.trim() || undefined);
+    setValue("");
+    setNote("");
+    setDate(today);
+    onOpenChange(false);
+    window.dispatchEvent(new Event("trendflow-refresh"));
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-10">
+        <SheetHeader className="mb-5">
+          <SheetTitle className="text-display text-lg">Neuer Eintrag</SheetTitle>
+        </SheetHeader>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Datum</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full h-12 px-4 rounded-xl bg-muted text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Wert</label>
+            <input
+              type="number"
+              inputMode="decimal"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="0"
+              className="w-full h-14 px-4 rounded-xl bg-muted text-foreground text-2xl font-bold tabular-nums placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-ring"
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Notiz (optional)</label>
+            <input
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="z.B. Nach dem Sport"
+              className="w-full h-12 px-4 rounded-xl bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          <button
+            onClick={handleSave}
+            disabled={!value || isNaN(parseFloat(value))}
+            className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold text-sm active:scale-[0.98] transition-transform disabled:opacity-40 card-shadow"
+          >
+            Speichern
+          </button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
