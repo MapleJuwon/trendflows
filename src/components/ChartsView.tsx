@@ -79,11 +79,36 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
     <div className="px-5 pt-3 pb-24">
       <div className="flex items-center justify-between mb-4 animate-fade-up">
         <h1 className="text-2xl text-display text-foreground">{t("charts.title")}</h1>
-        {activeId && (
-          <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
-            <Plus className="w-4 h-4 text-primary-foreground" />
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {activeId && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className={cn(
+                  "h-9 px-3 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-all active:scale-95",
+                  selectedDate ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                )}>
+                  <CalendarIcon className="w-3.5 h-3.5" />
+                  {selectedDate ? format(selectedDate, "d. MMM", { locale: dateLocale }) : t("charts.pickDate")}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(d) => setSelectedDate(d)}
+                  locale={dateLocale}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          )}
+          {activeId && (
+            <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
+              <Plus className="w-4 h-4 text-primary-foreground" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-4 animate-fade-up" style={{ animationDelay: "80ms" }}>
