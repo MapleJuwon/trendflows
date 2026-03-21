@@ -50,11 +50,20 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
     return col.entries.filter(e => e.date >= cutoffStr);
   }, [col, rangeIdx]);
 
-  const locale = lang === "de" ? "de-DE" : "en-US";
+  const dateLocale = lang === "de" ? de : enUS;
+  const localeStr = lang === "de" ? "de-DE" : "en-US";
   const chartData = filteredEntries.map(e => ({
-    date: new Date(e.date).toLocaleDateString(locale, { day: "numeric", month: "short" }),
+    date: new Date(e.date).toLocaleDateString(localeStr, { day: "numeric", month: "short" }),
+    rawDate: e.date,
     value: e.value,
   }));
+
+  const selectedEntry = selectedDate
+    ? filteredEntries.find(e => e.date === selectedDate.toISOString().split("T")[0])
+    : null;
+  const selectedChartIdx = selectedDate
+    ? chartData.findIndex(d => d.rawDate === selectedDate.toISOString().split("T")[0])
+    : -1;
 
   const stats = col ? getStats(filteredEntries) : null;
 
