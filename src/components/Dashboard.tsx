@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Plus, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { getCollections, getStats, type DataCollection } from "@/lib/store";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
+import { useI18n } from "@/lib/i18n";
 import AddEntrySheet from "./AddEntrySheet";
 import CreateCollectionSheet from "./CreateCollectionSheet";
 
@@ -11,6 +12,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ onOpenCollection, refreshKey }: DashboardProps) {
+  const { t, lang } = useI18n();
   const [collections, setCollections] = useState<DataCollection[]>([]);
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
@@ -23,18 +25,18 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
     const d = new Date(iso);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
-    if (diff < 60000) return "gerade eben";
-    if (diff < 3600000) return `vor ${Math.floor(diff / 60000)} Min.`;
-    if (diff < 86400000) return `vor ${Math.floor(diff / 3600000)} Std.`;
-    return d.toLocaleDateString("de-DE", { day: "numeric", month: "short" });
+    if (diff < 60000) return t("dashboard.justNow");
+    if (diff < 3600000) return t("dashboard.minsAgo", { n: Math.floor(diff / 60000) });
+    if (diff < 86400000) return t("dashboard.hoursAgo", { n: Math.floor(diff / 3600000) });
+    return d.toLocaleDateString(lang === "de" ? "de-DE" : "en-US", { day: "numeric", month: "short" });
   };
 
   return (
     <div className="px-5 pt-3 pb-24">
       <div className="flex items-center justify-between mb-6 animate-fade-up">
         <div>
-          <h1 className="text-2xl text-display text-foreground leading-tight">TrendFlow</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Deine Datensammlungen</p>
+          <h1 className="text-2xl text-display text-foreground leading-tight">{t("dashboard.title")}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{t("dashboard.subtitle")}</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
@@ -49,15 +51,13 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
           <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mb-4">
             <Plus className="w-7 h-7 text-primary" />
           </div>
-          <p className="text-foreground font-semibold mb-1">Noch keine Sammlungen</p>
-          <p className="text-sm text-muted-foreground text-center max-w-[240px]">
-            Erstelle deine erste Datensammlung, um Werte zu tracken.
-          </p>
+          <p className="text-foreground font-semibold mb-1">{t("dashboard.empty")}</p>
+          <p className="text-sm text-muted-foreground text-center max-w-[240px]">{t("dashboard.emptyDesc")}</p>
           <button
             onClick={() => setShowCreate(true)}
             className="mt-5 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold active:scale-95 transition-transform card-shadow"
           >
-            Sammlung erstellen
+            {t("dashboard.createCollection")}
           </button>
         </div>
       ) : (
@@ -112,7 +112,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                         </div>
                       </>
                     ) : (
-                      <span className="text-sm text-muted-foreground">Noch keine Einträge</span>
+                      <span className="text-sm text-muted-foreground">{t("dashboard.noEntries")}</span>
                     )}
                   </div>
 
@@ -120,13 +120,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                     <div className="w-24 h-10">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={chartData}>
-                          <Line
-                            type="monotone"
-                            dataKey="v"
-                            stroke={col.color}
-                            strokeWidth={2}
-                            dot={false}
-                          />
+                          <Line type="monotone" dataKey="v" stroke={col.color} strokeWidth={2} dot={false} />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
@@ -140,11 +134,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
 
       <CreateCollectionSheet open={showCreate} onOpenChange={setShowCreate} />
       {quickAddId && (
-        <AddEntrySheet
-          collectionId={quickAddId}
-          open={!!quickAddId}
-          onOpenChange={(open) => !open && setQuickAddId(null)}
-        />
+        <AddEntrySheet collectionId={quickAddId} open={!!quickAddId} onOpenChange={(open) => !open && setQuickAddId(null)} />
       )}
     </div>
   );

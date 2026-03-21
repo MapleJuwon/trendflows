@@ -1,4 +1,5 @@
 import { LayoutDashboard, BarChart3, List, User, Settings } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 type Tab = "dashboard" | "charts" | "entries" | "account" | "settings";
 
@@ -7,15 +8,17 @@ interface BottomNavProps {
   onNavigate: (tab: Tab) => void;
 }
 
-const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
-  { id: "dashboard", label: "Übersicht", icon: LayoutDashboard },
-  { id: "charts", label: "Diagramme", icon: BarChart3 },
-  { id: "entries", label: "Einträge", icon: List },
-  { id: "account", label: "Account", icon: User },
-  { id: "settings", label: "Einstellungen", icon: Settings },
-];
-
 export default function BottomNav({ active, onNavigate }: BottomNavProps) {
+  const { t } = useI18n();
+
+  const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
+    { id: "dashboard", label: t("nav.overview"), icon: LayoutDashboard },
+    { id: "charts", label: t("nav.charts"), icon: BarChart3 },
+    { id: "entries", label: t("nav.entries"), icon: List },
+    { id: "account", label: t("nav.account"), icon: User },
+    { id: "settings", label: t("nav.settings"), icon: Settings },
+  ];
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border safe-bottom">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
