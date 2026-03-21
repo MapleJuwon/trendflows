@@ -50,8 +50,16 @@ export default function EntriesView({ refreshKey }: Props) {
     <div className="px-5 pt-3 pb-24">
       <div className="flex items-center justify-between mb-4 animate-fade-up">
         <h1 className="text-2xl text-display text-foreground">{t("entries.title")}</h1>
-        <button onClick={() => setShowSearch(!showSearch)} className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform">
-          <Search className="w-4 h-4 text-muted-foreground" />
+        <div className="flex gap-2">
+          <button onClick={() => setShowSearch(!showSearch)} className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform">
+            <Search className="w-4 h-4 text-muted-foreground" />
+          </button>
+          {activeId && (
+            <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
+              <Plus className="w-4 h-4 text-primary-foreground" />
+            </button>
+          )}
+        </div>
         </button>
       </div>
 
