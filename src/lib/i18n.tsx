@@ -30,6 +30,8 @@ const translations = {
     "charts.count": "Einträge",
     "charts.goal": "Ziel",
     "charts.all": "Alle",
+    "charts.pickDate": "Tag wählen",
+    "charts.selectedDay": "Ausgewählter Tag",
     // Entries
     "entries.title": "Einträge",
     "entries.empty": "Noch keine Einträge.",
