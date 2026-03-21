@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { getCollections, deleteEntry, type DataCollection } from "@/lib/store";
-import { Trash2, Search } from "lucide-react";
+import { Trash2, Search, Plus } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import AddEntrySheet from "./AddEntrySheet";
 
 interface Props {
   refreshKey: number;
