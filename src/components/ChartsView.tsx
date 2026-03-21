@@ -63,7 +63,14 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
 
   return (
     <div className="px-5 pt-3 pb-24">
-      <h1 className="text-2xl text-display text-foreground mb-4 animate-fade-up">{t("charts.title")}</h1>
+      <div className="flex items-center justify-between mb-4 animate-fade-up">
+        <h1 className="text-2xl text-display text-foreground">{t("charts.title")}</h1>
+        {activeId && (
+          <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
+            <Plus className="w-4 h-4 text-primary-foreground" />
+          </button>
+        )}
+      </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-4 animate-fade-up" style={{ animationDelay: "80ms" }}>
         {collections.map(c => (
