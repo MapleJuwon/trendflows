@@ -142,6 +142,10 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
           )}
         </>
       )}
+
+      {activeId && (
+        <AddEntrySheet collectionId={activeId} open={showAddEntry} onOpenChange={setShowAddEntry} />
+      )}
     </div>
   );
 }
