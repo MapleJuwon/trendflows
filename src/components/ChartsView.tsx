@@ -1,0 +1,184 @@
+import { useState, useEffect, useMemo } from "react";
+import { getCollections, getStats, type DataCollection } from "@/lib/store";
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart,
+} from "recharts";
+
+const RANGES = [
+  { label: "7T", days: 7 },
+  { label: "30T", days: 30 },
+  { label: "3M", days: 90 },
+  { label: "1J", days: 365 },
+  { label: "Alle", days: 0 },
+];
+
+interface Props {
+  selectedId?: string | null;
+  refreshKey: number;
+}
+
+export default function ChartsView({ selectedId, refreshKey }: Props) {
+  const [collections, setCollections] = useState<DataCollection[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(selectedId ?? null);
+  const [rangeIdx, setRangeIdx] = useState(1);
+
+  useEffect(() => {
+    const cols = getCollections().filter(c => !c.archived && c.entries.length > 0);
+    setCollections(cols);
+    if (!activeId && cols.length > 0) setActiveId(cols[0].id);
+  }, [refreshKey]);
+
+  useEffect(() => {
+    if (selectedId) setActiveId(selectedId);
+  }, [selectedId]);
+
+  const col = collections.find(c => c.id === activeId);
+
+  const filteredEntries = useMemo(() => {
+    if (!col) return [];
+    const range = RANGES[rangeIdx];
+    if (range.days === 0) return col.entries;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - range.days);
+    const cutoffStr = cutoff.toISOString().split("T")[0];
+    return col.entries.filter(e => e.date >= cutoffStr);
+  }, [col, rangeIdx]);
+
+  const chartData = filteredEntries.map(e => ({
+    date: new Date(e.date).toLocaleDateString("de-DE", { day: "numeric", month: "short" }),
+    value: e.value,
+    fullDate: e.date,
+  }));
+
+  const stats = col ? getStats(filteredEntries) : null;
+
+  if (!collections.length) {
+    return (
+      <div className="px-5 pt-3 pb-24 flex flex-col items-center justify-center min-h-[60vh]">
+        <p className="text-muted-foreground text-sm">Noch keine Daten vorhanden.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-5 pt-3 pb-24">
+      <h1 className="text-2xl text-display text-foreground mb-4 animate-fade-up">Diagramme</h1>
+
+      {/* Collection selector */}
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-4 animate-fade-up" style={{ animationDelay: "80ms" }}>
+        {collections.map(c => (
+          <button
+            key={c.id}
+            onClick={() => setActiveId(c.id)}
+            className={`flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all active:scale-95 ${
+              activeId === c.id
+                ? "text-primary-foreground card-shadow"
+                : "bg-muted text-muted-foreground"
+            }`}
+            style={activeId === c.id ? { backgroundColor: c.color } : {}}
+          >
+            {c.title}
+          </button>
+        ))}
+      </div>
+
+      {col && (
+        <>
+          {/* Range selector */}
+          <div className="flex gap-1 bg-muted rounded-xl p-1 mb-5 animate-fade-up" style={{ animationDelay: "160ms" }}>
+            {RANGES.map((r, i) => (
+              <button
+                key={r.label}
+                onClick={() => setRangeIdx(i)}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  rangeIdx === i ? "bg-card text-foreground card-shadow" : "text-muted-foreground"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Chart */}
+          <div className="bg-card rounded-2xl p-4 card-shadow mb-5 animate-fade-up" style={{ animationDelay: "240ms" }}>
+            {chartData.length > 0 ? (
+              <div className="h-52">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: -15 }}>
+                    <defs>
+                      <linearGradient id={`grad-${col.id}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={col.color} stopOpacity={0.15} />
+                        <stop offset="100%" stopColor={col.color} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                      axisLine={false}
+                      tickLine={false}
+                      domain={["auto", "auto"]}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                      }}
+                      formatter={(val: number) => [`${val} ${col.unit}`, col.title]}
+                    />
+                    {col.goalValue && (
+                      <ReferenceLine
+                        y={col.goalValue}
+                        stroke="hsl(var(--muted-foreground))"
+                        strokeDasharray="6 4"
+                        label={{ value: `Ziel: ${col.goalValue}`, fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                      />
+                    )}
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke={col.color}
+                      strokeWidth={2.5}
+                      fill={`url(#grad-${col.id})`}
+                      dot={{ r: 3, fill: col.color, strokeWidth: 0 }}
+                      activeDot={{ r: 5, fill: col.color, strokeWidth: 2, stroke: "hsl(var(--card))" }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground text-sm py-10">Keine Daten im gewählten Zeitraum.</p>
+            )}
+          </div>
+
+          {/* Stats */}
+          {stats && (
+            <div className="grid grid-cols-2 gap-3 animate-fade-up" style={{ animationDelay: "320ms" }}>
+              {[
+                { label: "Durchschnitt", value: stats.avg },
+                { label: "Minimum", value: stats.min },
+                { label: "Maximum", value: stats.max },
+                { label: "Einträge", value: stats.count },
+              ].map(s => (
+                <div key={s.label} className="bg-card rounded-xl p-3.5 card-shadow">
+                  <p className="text-xs text-muted-foreground mb-0.5">{s.label}</p>
+                  <p className="text-lg font-bold text-foreground tabular-nums">
+                    {s.value} <span className="text-xs font-normal text-muted-foreground">{s.label !== "Einträge" ? col.unit : ""}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
