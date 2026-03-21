@@ -23,6 +23,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   const [collections, setCollections] = useState<DataCollection[]>([]);
   const [activeId, setActiveId] = useState<string | null>(selectedId ?? null);
   const [rangeIdx, setRangeIdx] = useState(1);
+  const [showAddEntry, setShowAddEntry] = useState(false);
 
   useEffect(() => {
     const cols = getCollections().filter(c => !c.archived && c.entries.length > 0);
