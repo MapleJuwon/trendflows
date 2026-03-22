@@ -51,19 +51,22 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   }, [col, rangeIdx]);
 
   const dateLocale = lang === "de" ? de : enUS;
-  const localeStr = lang === "de" ? "de-DE" : "en-US";
-  const chartData = filteredEntries.map(e => ({
-    date: new Date(e.date).toLocaleDateString(localeStr, { day: "numeric", month: "short" }),
-    rawDate: e.date,
-    value: e.value,
-  }));
+  const chartData = useMemo(() => {
+    return filteredEntries
+      .map(e => ({
+        timestamp: new Date(e.date).getTime(),
+        rawDate: e.date,
+        value: e.value,
+      }))
+      .sort((a, b) => a.timestamp - b.timestamp);
+  }, [filteredEntries]);
 
   const selectedEntry = selectedDate
     ? filteredEntries.find(e => e.date === selectedDate.toISOString().split("T")[0])
     : null;
-  const selectedChartIdx = selectedDate
-    ? chartData.findIndex(d => d.rawDate === selectedDate.toISOString().split("T")[0])
-    : -1;
+  const selectedChartPoint = selectedDate
+    ? chartData.find(d => d.rawDate === selectedDate.toISOString().split("T")[0])
+    : null;
 
   const stats = col ? getStats(filteredEntries) : null;
 
@@ -144,18 +147,35 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                    <XAxis
+                      dataKey="timestamp"
+                      type="number"
+                      scale="time"
+                      domain={["dataMin", "dataMax"]}
+                      tickFormatter={(ts: number) => {
+                        const range = RANGES[rangeIdx];
+                        if (range.days <= 7) return format(new Date(ts), "d. MMM", { locale: dateLocale });
+                        if (range.days <= 90) return format(new Date(ts), "d. MMM", { locale: dateLocale });
+                        return format(new Date(ts), "MMM yy", { locale: dateLocale });
+                      }}
+                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
                     <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
-                    <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
-                      formatter={(val: number) => [`${val} ${col.unit}`, col.title]} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
+                      labelFormatter={(ts: number) => format(new Date(ts), "d. MMMM yyyy", { locale: dateLocale })}
+                      formatter={(val: number) => [`${val} ${col.unit}`, col.title]}
+                    />
                     {col.goalValue && (
                       <ReferenceLine y={col.goalValue} stroke="hsl(var(--muted-foreground))" strokeDasharray="6 4"
                         label={{ value: `${t("charts.goal")}: ${col.goalValue}`, fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
                     )}
                     <Area type="monotone" dataKey="value" stroke={col.color} strokeWidth={2.5} fill={`url(#grad-${col.id})`}
                       dot={{ r: 3, fill: col.color, strokeWidth: 0 }} activeDot={{ r: 5, fill: col.color, strokeWidth: 2, stroke: "hsl(var(--card))" }} />
-                    {selectedChartIdx >= 0 && selectedEntry && (
-                      <ReferenceDot x={chartData[selectedChartIdx].date} y={selectedEntry.value}
+                    {selectedChartPoint && selectedEntry && (
+                      <ReferenceDot x={selectedChartPoint.timestamp} y={selectedEntry.value}
                         r={7} fill={col.color} stroke="hsl(var(--card))" strokeWidth={3} />
                     )}
                   </AreaChart>
