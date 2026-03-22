@@ -64,9 +64,9 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   const selectedEntry = selectedDate
     ? filteredEntries.find(e => e.date === selectedDate.toISOString().split("T")[0])
     : null;
-  const selectedChartIdx = selectedDate
-    ? chartData.findIndex(d => d.rawDate === selectedDate.toISOString().split("T")[0])
-    : -1;
+  const selectedChartPoint = selectedDate
+    ? chartData.find(d => d.rawDate === selectedDate.toISOString().split("T")[0])
+    : null;
 
   const stats = col ? getStats(filteredEntries) : null;
 
