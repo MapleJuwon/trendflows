@@ -51,12 +51,15 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   }, [col, rangeIdx]);
 
   const dateLocale = lang === "de" ? de : enUS;
-  const localeStr = lang === "de" ? "de-DE" : "en-US";
-  const chartData = filteredEntries.map(e => ({
-    date: new Date(e.date).toLocaleDateString(localeStr, { day: "numeric", month: "short" }),
-    rawDate: e.date,
-    value: e.value,
-  }));
+  const chartData = useMemo(() => {
+    return filteredEntries
+      .map(e => ({
+        timestamp: new Date(e.date).getTime(),
+        rawDate: e.date,
+        value: e.value,
+      }))
+      .sort((a, b) => a.timestamp - b.timestamp);
+  }, [filteredEntries]);
 
   const selectedEntry = selectedDate
     ? filteredEntries.find(e => e.date === selectedDate.toISOString().split("T")[0])
