@@ -52,8 +52,6 @@ const translations = {
     "collection.unitPlaceholder": "z.B. kg, Stunden, €",
     "collection.color": "Farbe",
     "collection.create": "Erstellen",
-    "collection.deleteConfirm": "Sammlung \"{name}\" wirklich löschen? Alle zugehörigen Einträge werden ebenfalls gelöscht.",
-    "collection.deleted": "Sammlung gelöscht.",
     // Account
     "account.title": "Account",
     "account.guest": "Gast-Nutzer",
@@ -190,8 +188,6 @@ const translations = {
     "collection.unitPlaceholder": "e.g. kg, hours, €",
     "collection.color": "Color",
     "collection.create": "Create",
-    "collection.deleteConfirm": "Really delete collection \"{name}\"? All entries will be deleted too.",
-    "collection.deleted": "Collection deleted.",
     "account.title": "Account",
     "account.guest": "Guest user",
     "account.guestDesc": "Create an account to secure your data",
