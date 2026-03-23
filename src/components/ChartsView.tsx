@@ -123,7 +123,13 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
               </PopoverContent>
             </Popover>
           )}
-          {activeId && (
+           {activeId && (
+             <button onClick={() => { const c = collections.find(x => x.id === activeId); if (c) setDeleteTarget(c); }}
+               className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform hover:bg-destructive/10">
+               <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+             </button>
+           )}
+           {activeId && (
             <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
               <Plus className="w-4 h-4 text-primary-foreground" />
             </button>
