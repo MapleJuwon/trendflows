@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { getCollections, getStats, type DataCollection } from "@/lib/store";
+import { getStats, type DataCollection } from "@/lib/store";
+import { useCollections } from "@/hooks/useCollections";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceDot } from "recharts";
 import { Plus, CalendarIcon } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -25,16 +26,19 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
     { label: t("charts.all"), days: 0 },
   ];
 
-  const [collections, setCollections] = useState<DataCollection[]>([]);
+  const { collections: allCollections, refresh } = useCollections();
   const [activeId, setActiveId] = useState<string | null>(selectedId ?? null);
   const [rangeIdx, setRangeIdx] = useState(1);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+
+  useEffect(() => { refresh(); }, [refreshKey]);
+
+  const collections = allCollections.filter(c => !c.archived && c.entries.length > 0);
+
   useEffect(() => {
-    const cols = getCollections().filter(c => !c.archived && c.entries.length > 0);
-    setCollections(cols);
-    if (!activeId && cols.length > 0) setActiveId(cols[0].id);
-  }, [refreshKey]);
+    if (!activeId && collections.length > 0) setActiveId(collections[0].id);
+  }, [collections]);
 
   useEffect(() => { if (selectedId) setActiveId(selectedId); }, [selectedId]);
 
