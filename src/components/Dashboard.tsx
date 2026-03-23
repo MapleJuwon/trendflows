@@ -20,6 +20,15 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
   const { collections: allCollections, refresh } = useCollections();
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DataCollection | null>(null);
+
+  const handleDeleteCollection = async () => {
+    if (!deleteTarget) return;
+    await deleteCollection(deleteTarget.id);
+    toast.success(t("collection.deleted"));
+    setDeleteTarget(null);
+    window.dispatchEvent(new Event("trendflow-refresh"));
+  };
 
   useEffect(() => { refresh(); }, [refreshKey]);
 
