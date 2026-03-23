@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { getStats, type DataCollection } from "@/lib/store";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2 } from "lucide-react";
+import { getStats, deleteCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useI18n } from "@/lib/i18n";
+import { toast } from "sonner";
 import AddEntrySheet from "./AddEntrySheet";
 import CreateCollectionSheet from "./CreateCollectionSheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface DashboardProps {
   onOpenCollection: (id: string) => void;
@@ -17,6 +20,15 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
   const { collections: allCollections, refresh } = useCollections();
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DataCollection | null>(null);
+
+  const handleDeleteCollection = async () => {
+    if (!deleteTarget) return;
+    await deleteCollection(deleteTarget.id);
+    toast.success(t("collection.deleted"));
+    setDeleteTarget(null);
+    window.dispatchEvent(new Event("trendflow-refresh"));
+  };
 
   useEffect(() => { refresh(); }, [refreshKey]);
 
@@ -83,12 +95,20 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                       <p className="text-xs text-muted-foreground">{formatDate(col.updatedAt)}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setQuickAddId(col.id); }}
-                    className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center active:scale-95 transition-transform"
-                  >
-                    <Plus className="w-4 h-4 text-accent-foreground" />
-                  </button>
+                   <div className="flex items-center gap-1.5">
+                     <button
+                       onClick={(e) => { e.stopPropagation(); setQuickAddId(col.id); }}
+                       className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center active:scale-95 transition-transform"
+                     >
+                       <Plus className="w-4 h-4 text-accent-foreground" />
+                     </button>
+                     <button
+                       onClick={(e) => { e.stopPropagation(); setDeleteTarget(col); }}
+                       className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform hover:bg-destructive/10"
+                     >
+                       <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+                     </button>
+                   </div>
                 </div>
 
                 <div className="flex items-end justify-between">
@@ -137,6 +157,21 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
       {quickAddId && (
         <AddEntrySheet collectionId={quickAddId} open={!!quickAddId} onOpenChange={(open) => !open && setQuickAddId(null)} />
       )}
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("common.delete")}</DialogTitle>
+            <DialogDescription>
+              {deleteTarget ? t("collection.deleteConfirm", { name: deleteTarget.title }) : ""}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>{t("common.cancel")}</Button>
+            <Button variant="destructive" onClick={handleDeleteCollection}>{t("common.delete")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

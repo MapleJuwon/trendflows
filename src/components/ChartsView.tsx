@@ -1,14 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
-import { getStats, type DataCollection } from "@/lib/store";
+import { getStats, deleteCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceDot } from "recharts";
-import { Plus, CalendarIcon } from "lucide-react";
+import { Plus, CalendarIcon, Trash2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { format } from "date-fns";
 import { de, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import AddEntrySheet from "./AddEntrySheet";
 
 interface Props {
@@ -31,6 +34,16 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   const [rangeIdx, setRangeIdx] = useState(1);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [deleteTarget, setDeleteTarget] = useState<DataCollection | null>(null);
+
+  const handleDeleteCollection = async () => {
+    if (!deleteTarget) return;
+    await deleteCollection(deleteTarget.id);
+    toast.success(t("collection.deleted"));
+    setDeleteTarget(null);
+    if (activeId === deleteTarget.id) setActiveId(null);
+    window.dispatchEvent(new Event("trendflow-refresh"));
+  };
 
   useEffect(() => { refresh(); }, [refreshKey]);
 
@@ -110,7 +123,13 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
               </PopoverContent>
             </Popover>
           )}
-          {activeId && (
+           {activeId && (
+             <button onClick={() => { const c = collections.find(x => x.id === activeId); if (c) setDeleteTarget(c); }}
+               className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform hover:bg-destructive/10">
+               <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+             </button>
+           )}
+           {activeId && (
             <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
               <Plus className="w-4 h-4 text-primary-foreground" />
             </button>
@@ -228,6 +247,21 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
       {activeId && (
         <AddEntrySheet collectionId={activeId} open={showAddEntry} onOpenChange={setShowAddEntry} />
       )}
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("common.delete")}</DialogTitle>
+            <DialogDescription>
+              {deleteTarget ? t("collection.deleteConfirm", { name: deleteTarget.title }) : ""}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>{t("common.cancel")}</Button>
+            <Button variant="destructive" onClick={handleDeleteCollection}>{t("common.delete")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
