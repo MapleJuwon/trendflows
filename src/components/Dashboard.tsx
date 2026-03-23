@@ -95,12 +95,20 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                       <p className="text-xs text-muted-foreground">{formatDate(col.updatedAt)}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setQuickAddId(col.id); }}
-                    className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center active:scale-95 transition-transform"
-                  >
-                    <Plus className="w-4 h-4 text-accent-foreground" />
-                  </button>
+                   <div className="flex items-center gap-1.5">
+                     <button
+                       onClick={(e) => { e.stopPropagation(); setQuickAddId(col.id); }}
+                       className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center active:scale-95 transition-transform"
+                     >
+                       <Plus className="w-4 h-4 text-accent-foreground" />
+                     </button>
+                     <button
+                       onClick={(e) => { e.stopPropagation(); setDeleteTarget(col); }}
+                       className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform hover:bg-destructive/10"
+                     >
+                       <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+                     </button>
+                   </div>
                 </div>
 
                 <div className="flex items-end justify-between">
