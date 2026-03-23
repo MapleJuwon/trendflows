@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { deleteEntry, type DataCollection } from "@/lib/store";
-import { useCollections } from "@/hooks/useCollections";
+import { getCollections, deleteEntry, type DataCollection } from "@/lib/store";
 import { Trash2, Search, Plus } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import AddEntrySheet from "./AddEntrySheet";
@@ -11,19 +10,17 @@ interface Props {
 
 export default function EntriesView({ refreshKey }: Props) {
   const { t, lang } = useI18n();
-  const { collections: allCollections, refresh } = useCollections();
+  const [collections, setCollections] = useState<DataCollection[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
 
-  useEffect(() => { refresh(); }, [refreshKey]);
-
-  const collections = allCollections.filter(c => !c.archived);
-
   useEffect(() => {
-    if (!activeId && collections.length) setActiveId(collections[0].id);
-  }, [collections]);
+    const cols = getCollections().filter(c => !c.archived);
+    setCollections(cols);
+    if (!activeId && cols.length) setActiveId(cols[0].id);
+  }, [refreshKey]);
 
   const col = collections.find(c => c.id === activeId);
   const entries = col?.entries.slice().reverse() ?? [];
@@ -31,9 +28,9 @@ export default function EntriesView({ refreshKey }: Props) {
     ? entries.filter(e => e.date.includes(search) || e.note?.toLowerCase().includes(search.toLowerCase()) || String(e.value).includes(search))
     : entries;
 
-  const handleDelete = async (entryId: string) => {
+  const handleDelete = (entryId: string) => {
     if (!col) return;
-    await deleteEntry(col.id, entryId);
+    deleteEntry(col.id, entryId);
     window.dispatchEvent(new Event("trendflow-refresh"));
   };
 
