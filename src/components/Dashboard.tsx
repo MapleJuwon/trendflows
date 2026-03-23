@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { getStats, type DataCollection } from "@/lib/store";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2 } from "lucide-react";
+import { getStats, deleteCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useI18n } from "@/lib/i18n";
+import { toast } from "sonner";
 import AddEntrySheet from "./AddEntrySheet";
 import CreateCollectionSheet from "./CreateCollectionSheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface DashboardProps {
   onOpenCollection: (id: string) => void;
