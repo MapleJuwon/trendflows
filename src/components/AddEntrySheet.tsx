@@ -15,14 +15,17 @@ export default function AddEntrySheet({ collectionId, open, onOpenChange }: Prop
   const [date, setDate] = useState(today);
   const [value, setValue] = useState("");
   const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const num = parseFloat(value);
     if (isNaN(num)) return;
-    addEntry(collectionId, date, num, note.trim() || undefined);
+    setSaving(true);
+    await addEntry(collectionId, date, num, note.trim() || undefined);
     setValue("");
     setNote("");
     setDate(today);
+    setSaving(false);
     onOpenChange(false);
     window.dispatchEvent(new Event("trendflow-refresh"));
   };
@@ -49,9 +52,9 @@ export default function AddEntrySheet({ collectionId, open, onOpenChange }: Prop
             <input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("entry.notePlaceholder")}
               className="w-full h-12 px-4 rounded-xl bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
-          <button onClick={handleSave} disabled={!value || isNaN(parseFloat(value))}
+          <button onClick={handleSave} disabled={!value || isNaN(parseFloat(value)) || saving}
             className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold text-sm active:scale-[0.98] transition-transform disabled:opacity-40 card-shadow">
-            {t("entry.save")}
+            {saving ? "..." : t("entry.save")}
           </button>
         </div>
       </SheetContent>

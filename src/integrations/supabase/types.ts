@@ -14,7 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      collections: {
+        Row: {
+          archived: boolean
+          color: string
+          created_at: string
+          goal_value: number | null
+          id: string
+          title: string
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          color: string
+          created_at?: string
+          goal_value?: number | null
+          id?: string
+          title: string
+          unit: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          color?: string
+          created_at?: string
+          goal_value?: number | null
+          id?: string
+          title?: string
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      entries: {
+        Row: {
+          collection_id: string
+          created_at: string
+          date: string
+          id: string
+          note: string | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          collection_id: string
+          created_at?: string
+          date: string
+          id?: string
+          note?: string | null
+          user_id: string
+          value: number
+        }
+        Update: {
+          collection_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entries_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

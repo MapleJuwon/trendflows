@@ -31,14 +31,17 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const [title, setTitle] = useState("");
   const [unit, setUnit] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
+  const [saving, setSaving] = useState(false);
 
   const suggestions = lang === "de" ? SUGGESTIONS_DE : SUGGESTIONS_EN;
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!title.trim() || !unit.trim()) return;
-    createCollection(title.trim(), unit.trim(), selectedColor);
+    setSaving(true);
+    await createCollection(title.trim(), unit.trim(), selectedColor);
     setTitle("");
     setUnit("");
+    setSaving(false);
     onOpenChange(false);
     window.dispatchEvent(new Event("trendflow-refresh"));
   };
@@ -78,9 +81,9 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
               ))}
             </div>
           </div>
-          <button onClick={handleCreate} disabled={!title.trim() || !unit.trim()}
+          <button onClick={handleCreate} disabled={!title.trim() || !unit.trim() || saving}
             className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold text-sm active:scale-[0.98] transition-transform disabled:opacity-40 card-shadow">
-            {t("collection.create")}
+            {saving ? "..." : t("collection.create")}
           </button>
         </div>
       </SheetContent>

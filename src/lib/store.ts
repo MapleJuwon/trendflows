@@ -1,6 +1,8 @@
+import { supabase } from "@/integrations/supabase/client";
+
 export interface DataEntry {
   id: string;
-  date: string; // ISO date string YYYY-MM-DD
+  date: string;
   value: number;
   note?: string;
 }
@@ -17,84 +19,137 @@ export interface DataCollection {
   archived?: boolean;
 }
 
-const STORAGE_KEY = 'trendflow_data';
-
 const COLORS = [
-  'hsl(207, 90%, 68%)',   // blue
-  'hsl(123, 38%, 63%)',   // green
-  'hsl(38, 92%, 65%)',    // amber
-  'hsl(340, 65%, 65%)',   // rose
-  'hsl(262, 52%, 65%)',   // purple
-  'hsl(180, 50%, 55%)',   // teal
-  'hsl(15, 80%, 62%)',    // orange
-  'hsl(200, 70%, 55%)',   // sky
+  'hsl(207, 90%, 68%)',
+  'hsl(123, 38%, 63%)',
+  'hsl(38, 92%, 65%)',
+  'hsl(340, 65%, 65%)',
+  'hsl(262, 52%, 65%)',
+  'hsl(180, 50%, 55%)',
+  'hsl(15, 80%, 62%)',
+  'hsl(200, 70%, 55%)',
 ];
 
-export function getCollections(): DataCollection[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
+export async function fetchCollections(): Promise<DataCollection[]> {
+  const { data: cols, error: colErr } = await supabase
+    .from("collections")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (colErr || !cols) return [];
+
+  const { data: entries, error: entErr } = await supabase
+    .from("entries")
+    .select("*")
+    .order("date", { ascending: true });
+
+  const entriesByCol: Record<string, DataEntry[]> = {};
+  if (entries && !entErr) {
+    for (const e of entries) {
+      const cid = e.collection_id;
+      if (!entriesByCol[cid]) entriesByCol[cid] = [];
+      entriesByCol[cid].push({
+        id: e.id,
+        date: e.date,
+        value: Number(e.value),
+        note: e.note ?? undefined,
+      });
+    }
+  }
+
+  return cols.map((c) => ({
+    id: c.id,
+    title: c.title,
+    unit: c.unit,
+    color: c.color,
+    goalValue: c.goal_value ? Number(c.goal_value) : undefined,
+    entries: entriesByCol[c.id] ?? [],
+    createdAt: c.created_at,
+    updatedAt: c.updated_at,
+    archived: c.archived,
+  }));
 }
 
-export function saveCollections(collections: DataCollection[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(collections));
-}
+export async function createCollection(title: string, unit: string, color?: string): Promise<DataCollection | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
 
-export function createCollection(title: string, unit: string, color?: string): DataCollection {
-  const collections = getCollections();
-  const col: DataCollection = {
-    id: crypto.randomUUID(),
-    title,
-    unit,
-    color: color || COLORS[collections.length % COLORS.length],
+  const allCols = await fetchCollections();
+  const finalColor = color || COLORS[allCols.length % COLORS.length];
+
+  const { data, error } = await supabase
+    .from("collections")
+    .insert({ user_id: user.id, title, unit, color: finalColor })
+    .select()
+    .single();
+
+  if (error || !data) return null;
+
+  return {
+    id: data.id,
+    title: data.title,
+    unit: data.unit,
+    color: data.color,
+    goalValue: data.goal_value ? Number(data.goal_value) : undefined,
     entries: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    archived: data.archived,
   };
-  saveCollections([...collections, col]);
-  return col;
 }
 
-export function addEntry(collectionId: string, date: string, value: number, note?: string): DataEntry {
-  const collections = getCollections();
-  const entry: DataEntry = { id: crypto.randomUUID(), date, value, note };
-  const updated = collections.map(c => 
-    c.id === collectionId 
-      ? { ...c, entries: [...c.entries, entry].sort((a, b) => a.date.localeCompare(b.date)), updatedAt: new Date().toISOString() }
-      : c
-  );
-  saveCollections(updated);
-  return entry;
+export async function addEntry(collectionId: string, date: string, value: number, note?: string): Promise<DataEntry | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("entries")
+    .insert({ collection_id: collectionId, user_id: user.id, date, value, note: note || null })
+    .select()
+    .single();
+
+  if (error || !data) return null;
+
+  // Update collection's updated_at
+  await supabase.from("collections").update({ updated_at: new Date().toISOString() }).eq("id", collectionId);
+
+  return { id: data.id, date: data.date, value: Number(data.value), note: data.note ?? undefined };
 }
 
-export function updateEntry(collectionId: string, entryId: string, data: Partial<DataEntry>) {
-  const collections = getCollections();
-  const updated = collections.map(c => 
-    c.id === collectionId 
-      ? { ...c, entries: c.entries.map(e => e.id === entryId ? { ...e, ...data } : e).sort((a, b) => a.date.localeCompare(b.date)), updatedAt: new Date().toISOString() }
-      : c
-  );
-  saveCollections(updated);
+export async function updateEntry(collectionId: string, entryId: string, updates: Partial<DataEntry>) {
+  const upd: Record<string, unknown> = {};
+  if (updates.date !== undefined) upd.date = updates.date;
+  if (updates.value !== undefined) upd.value = updates.value;
+  if (updates.note !== undefined) upd.note = updates.note || null;
+
+  await supabase.from("entries").update(upd).eq("id", entryId);
+  await supabase.from("collections").update({ updated_at: new Date().toISOString() }).eq("id", collectionId);
 }
 
-export function deleteEntry(collectionId: string, entryId: string) {
-  const collections = getCollections();
-  const updated = collections.map(c => 
-    c.id === collectionId 
-      ? { ...c, entries: c.entries.filter(e => e.id !== entryId), updatedAt: new Date().toISOString() }
-      : c
-  );
-  saveCollections(updated);
+export async function deleteEntry(collectionId: string, entryId: string) {
+  await supabase.from("entries").delete().eq("id", entryId);
+  await supabase.from("collections").update({ updated_at: new Date().toISOString() }).eq("id", collectionId);
 }
 
-export function deleteCollection(collectionId: string) {
-  saveCollections(getCollections().filter(c => c.id !== collectionId));
+export async function deleteCollection(collectionId: string) {
+  await supabase.from("collections").delete().eq("id", collectionId);
 }
 
-export function updateCollection(collectionId: string, data: Partial<DataCollection>) {
-  const collections = getCollections();
-  saveCollections(collections.map(c => c.id === collectionId ? { ...c, ...data, updatedAt: new Date().toISOString() } : c));
+export async function updateCollection(collectionId: string, data: Partial<DataCollection>) {
+  const upd: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (data.title !== undefined) upd.title = data.title;
+  if (data.unit !== undefined) upd.unit = data.unit;
+  if (data.color !== undefined) upd.color = data.color;
+  if (data.goalValue !== undefined) upd.goal_value = data.goalValue;
+  if (data.archived !== undefined) upd.archived = data.archived;
+
+  await supabase.from("collections").update(upd).eq("id", collectionId);
+}
+
+export async function deleteAllData() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from("collections").delete().eq("user_id", user.id);
 }
 
 export function getStats(entries: DataEntry[]) {
