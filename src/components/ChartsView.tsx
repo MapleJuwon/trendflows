@@ -34,6 +34,16 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   const [rangeIdx, setRangeIdx] = useState(1);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [deleteTarget, setDeleteTarget] = useState<DataCollection | null>(null);
+
+  const handleDeleteCollection = async () => {
+    if (!deleteTarget) return;
+    await deleteCollection(deleteTarget.id);
+    toast.success(t("collection.deleted"));
+    setDeleteTarget(null);
+    if (activeId === deleteTarget.id) setActiveId(null);
+    window.dispatchEvent(new Event("trendflow-refresh"));
+  };
 
   useEffect(() => { refresh(); }, [refreshKey]);
 
