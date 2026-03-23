@@ -190,6 +190,8 @@ const translations = {
     "collection.unitPlaceholder": "e.g. kg, hours, €",
     "collection.color": "Color",
     "collection.create": "Create",
+    "collection.deleteConfirm": "Really delete collection \"{name}\"? All entries will be deleted too.",
+    "collection.deleted": "Collection deleted.",
     "account.title": "Account",
     "account.guest": "Guest user",
     "account.guestDesc": "Create an account to secure your data",
