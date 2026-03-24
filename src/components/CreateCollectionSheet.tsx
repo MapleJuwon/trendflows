@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createCollection, COLORS } from "@/lib/store";
 import { useI18n } from "@/lib/i18n";
+import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface Props {
@@ -38,10 +39,14 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const handleCreate = async () => {
     if (!title.trim() || !unit.trim()) return;
     setSaving(true);
-    await createCollection(title.trim(), unit.trim(), selectedColor);
+    const result = await createCollection(title.trim(), unit.trim(), selectedColor);
+    setSaving(false);
+    if (!result) {
+      toast.error("Fehler beim Erstellen der Sammlung");
+      return;
+    }
     setTitle("");
     setUnit("");
-    setSaving(false);
     onOpenChange(false);
     window.dispatchEvent(new Event("trendflow-refresh"));
   };

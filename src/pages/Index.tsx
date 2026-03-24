@@ -5,8 +5,11 @@ import ChartsView from "@/components/ChartsView";
 import EntriesView from "@/components/EntriesView";
 import AccountView from "@/components/AccountView";
 import SettingsView from "@/components/SettingsView";
+import AuthScreen from "@/components/AuthScreen";
+import { useAuth } from "@/lib/auth";
 
 export default function Index() {
+  const { user, loading } = useAuth();
   const [tab, setTab] = useState<Tab>("dashboard");
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -22,6 +25,18 @@ export default function Index() {
     setSelectedCollectionId(id);
     setTab("charts");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthScreen onClose={() => {}} />;
+  }
 
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto relative">
