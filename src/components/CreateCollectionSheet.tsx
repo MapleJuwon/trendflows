@@ -3,7 +3,6 @@ import { createCollection, COLORS } from "@/lib/store";
 import { useI18n } from "@/lib/i18n";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface Props {
   open: boolean;
