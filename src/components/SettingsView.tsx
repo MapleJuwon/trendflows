@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Sun, Moon, Globe, Bell, Shield, Download, HelpCircle, ChevronRight, Check, Trash2, MessageCircle } from "lucide-react";
-import { useI18n, type Lang } from "@/lib/i18n";
+import { useI18n, type Lang, LANG_LABELS } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { fetchCollections, deleteAllData } from "@/lib/store";
 import { toast } from "sonner";
@@ -63,7 +63,7 @@ export default function SettingsView() {
 
   const items = [
     { icon: Sun, label: t("settings.appearance"), desc: t("settings.appearanceDesc"), sheet: "appearance" as const },
-    { icon: Globe, label: t("settings.language"), desc: lang === "de" ? "Deutsch" : "English", sheet: "language" as const },
+    { icon: Globe, label: t("settings.language"), desc: LANG_LABELS[lang], sheet: "language" as const },
     { icon: Bell, label: t("settings.notifications"), desc: t("settings.notificationsDesc"), sheet: "notifications" as const },
     { icon: Shield, label: t("settings.privacy"), desc: t("settings.privacyDesc"), sheet: "privacy" as const },
     { icon: Download, label: t("settings.export"), desc: t("settings.exportDesc"), sheet: "export" as const },
@@ -126,12 +126,12 @@ export default function SettingsView() {
         <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-10">
           <SheetHeader className="mb-5"><SheetTitle className="text-display text-lg">{t("settings.language")}</SheetTitle></SheetHeader>
           <div className="space-y-2">
-            {(["de", "en"] as Lang[]).map(l => (
+            {(Object.keys(LANG_LABELS) as Lang[]).map(l => (
               <button key={l} onClick={() => { setLang(l); setOpenSheet(null); }}
                 className={`w-full p-4 rounded-xl flex items-center justify-between transition-all active:scale-[0.98] ${lang === l ? "bg-accent" : "bg-muted"}`}>
                 <div className="flex items-center gap-3">
                   <Globe className="w-5 h-5 text-foreground" />
-                  <span className="text-sm font-medium text-foreground">{t(`language.${l}`)}</span>
+                  <span className="text-sm font-medium text-foreground">{LANG_LABELS[l]}</span>
                 </div>
                 {lang === l && <Check className="w-4 h-4 text-primary" />}
               </button>
