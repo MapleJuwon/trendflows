@@ -9,23 +9,80 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-const SUGGESTIONS_DE = [
-  { title: "Gewicht", unit: "kg" },
-  { title: "Schlaf", unit: "Stunden" },
-  { title: "Stimmung", unit: "/10" },
-  { title: "Wasser", unit: "Liter" },
-  { title: "Ausgaben", unit: "€" },
-  { title: "Schritte", unit: "Schritte" },
-];
-
-const SUGGESTIONS_EN = [
-  { title: "Weight", unit: "kg" },
-  { title: "Sleep", unit: "hours" },
-  { title: "Mood", unit: "/10" },
-  { title: "Water", unit: "liters" },
-  { title: "Expenses", unit: "€" },
-  { title: "Steps", unit: "steps" },
-];
+const SUGGESTIONS: Record<string, { title: string; unit: string }[]> = {
+  de: [
+    { title: "Gewicht", unit: "kg" },
+    { title: "Schlaf", unit: "Stunden" },
+    { title: "Stimmung", unit: "/10" },
+    { title: "Wasser", unit: "Liter" },
+    { title: "Ausgaben", unit: "€" },
+    { title: "Schritte", unit: "Schritte" },
+  ],
+  en: [
+    { title: "Weight", unit: "kg" },
+    { title: "Sleep", unit: "hours" },
+    { title: "Mood", unit: "/10" },
+    { title: "Water", unit: "liters" },
+    { title: "Expenses", unit: "€" },
+    { title: "Steps", unit: "steps" },
+  ],
+  zh: [
+    { title: "体重", unit: "kg" },
+    { title: "睡眠", unit: "小时" },
+    { title: "心情", unit: "/10" },
+    { title: "饮水", unit: "升" },
+    { title: "支出", unit: "¥" },
+    { title: "步数", unit: "步" },
+  ],
+  es: [
+    { title: "Peso", unit: "kg" },
+    { title: "Sueño", unit: "horas" },
+    { title: "Ánimo", unit: "/10" },
+    { title: "Agua", unit: "litros" },
+    { title: "Gastos", unit: "€" },
+    { title: "Pasos", unit: "pasos" },
+  ],
+  pt: [
+    { title: "Peso", unit: "kg" },
+    { title: "Sono", unit: "horas" },
+    { title: "Humor", unit: "/10" },
+    { title: "Água", unit: "litros" },
+    { title: "Gastos", unit: "R$" },
+    { title: "Passos", unit: "passos" },
+  ],
+  fr: [
+    { title: "Poids", unit: "kg" },
+    { title: "Sommeil", unit: "heures" },
+    { title: "Humeur", unit: "/10" },
+    { title: "Eau", unit: "litres" },
+    { title: "Dépenses", unit: "€" },
+    { title: "Pas", unit: "pas" },
+  ],
+  ar: [
+    { title: "الوزن", unit: "كغ" },
+    { title: "النوم", unit: "ساعات" },
+    { title: "المزاج", unit: "/10" },
+    { title: "الماء", unit: "لتر" },
+    { title: "المصاريف", unit: "﷼" },
+    { title: "الخطوات", unit: "خطوة" },
+  ],
+  ja: [
+    { title: "体重", unit: "kg" },
+    { title: "睡眠", unit: "時間" },
+    { title: "気分", unit: "/10" },
+    { title: "水分", unit: "リットル" },
+    { title: "支出", unit: "¥" },
+    { title: "歩数", unit: "歩" },
+  ],
+  ko: [
+    { title: "체중", unit: "kg" },
+    { title: "수면", unit: "시간" },
+    { title: "기분", unit: "/10" },
+    { title: "물", unit: "리터" },
+    { title: "지출", unit: "₩" },
+    { title: "걸음수", unit: "걸음" },
+  ],
+};
 
 export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const { t, lang } = useI18n();
@@ -34,7 +91,7 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [saving, setSaving] = useState(false);
 
-  const suggestions = lang === "de" ? SUGGESTIONS_DE : SUGGESTIONS_EN;
+  const suggestions = SUGGESTIONS[lang] || SUGGESTIONS.en;
 
   const handleCreate = async () => {
     if (!title.trim() || !unit.trim()) return;
