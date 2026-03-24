@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Sun, Moon, Globe, Bell, Shield, Download, HelpCircle, ChevronRight, Check, Trash2, MessageCircle } from "lucide-react";
-import { useI18n, type Lang } from "@/lib/i18n";
+import { useI18n, type Lang, LANG_LABELS } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { fetchCollections, deleteAllData } from "@/lib/store";
 import { toast } from "sonner";
