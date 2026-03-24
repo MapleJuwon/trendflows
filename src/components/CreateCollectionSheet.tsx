@@ -42,7 +42,7 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
     const result = await createCollection(title.trim(), unit.trim(), selectedColor);
     setSaving(false);
     if (!result) {
-      toast.error(t("collection.createError") || "Fehler beim Erstellen");
+      toast.error("Fehler beim Erstellen der Sammlung");
       return;
     }
     setTitle("");
