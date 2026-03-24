@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Sun, Moon, Globe, Bell, Shield, Download, HelpCircle, ChevronRight, ArrowLeft, Check, Trash2, MessageCircle } from "lucide-react";
+import { Sun, Moon, Globe, Bell, Shield, Download, HelpCircle, ChevronRight, Check, Trash2, MessageCircle } from "lucide-react";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
-import { getCollections, saveCollections } from "@/lib/store";
+import { fetchCollections, deleteAllData } from "@/lib/store";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
@@ -33,8 +33,8 @@ export default function SettingsView() {
     }
   };
 
-  const handleExport = () => {
-    const collections = getCollections();
+  const handleExport = async () => {
+    const collections = await fetchCollections();
     if (!collections.length) { toast.error(t("export.noData")); return; }
     let csv = "Collection,Date,Value,Unit,Note\n";
     collections.forEach(col => {
@@ -53,9 +53,9 @@ export default function SettingsView() {
     setOpenSheet(null);
   };
 
-  const handleDeleteAllData = () => {
+  const handleDeleteAllData = async () => {
     if (!window.confirm(t("privacy.deleteConfirm"))) return;
-    saveCollections([]);
+    await deleteAllData();
     window.dispatchEvent(new Event("trendflow-refresh"));
     toast.success(t("privacy.dataDeleted"));
     setOpenSheet(null);

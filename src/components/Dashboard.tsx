@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { getCollections, getStats, type DataCollection } from "@/lib/store";
+import { getStats, type DataCollection } from "@/lib/store";
+import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useI18n } from "@/lib/i18n";
 import AddEntrySheet from "./AddEntrySheet";
@@ -13,13 +14,13 @@ interface DashboardProps {
 
 export default function Dashboard({ onOpenCollection, refreshKey }: DashboardProps) {
   const { t, lang } = useI18n();
-  const [collections, setCollections] = useState<DataCollection[]>([]);
+  const { collections: allCollections, refresh } = useCollections();
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
 
-  useEffect(() => {
-    setCollections(getCollections().filter(c => !c.archived));
-  }, [refreshKey]);
+  useEffect(() => { refresh(); }, [refreshKey]);
+
+  const collections = allCollections.filter(c => !c.archived);
 
   const formatDate = (iso: string) => {
     const d = new Date(iso);
