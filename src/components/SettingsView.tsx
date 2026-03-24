@@ -126,12 +126,12 @@ export default function SettingsView() {
         <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-10">
           <SheetHeader className="mb-5"><SheetTitle className="text-display text-lg">{t("settings.language")}</SheetTitle></SheetHeader>
           <div className="space-y-2">
-            {(["de", "en"] as Lang[]).map(l => (
+            {(Object.keys(LANG_LABELS) as Lang[]).map(l => (
               <button key={l} onClick={() => { setLang(l); setOpenSheet(null); }}
                 className={`w-full p-4 rounded-xl flex items-center justify-between transition-all active:scale-[0.98] ${lang === l ? "bg-accent" : "bg-muted"}`}>
                 <div className="flex items-center gap-3">
                   <Globe className="w-5 h-5 text-foreground" />
-                  <span className="text-sm font-medium text-foreground">{t(`language.${l}`)}</span>
+                  <span className="text-sm font-medium text-foreground">{LANG_LABELS[l]}</span>
                 </div>
                 {lang === l && <Check className="w-4 h-4 text-primary" />}
               </button>
