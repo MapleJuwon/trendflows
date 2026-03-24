@@ -19,7 +19,7 @@ export interface DataCollection {
   archived?: boolean;
 }
 
-const COLORS = [
+export const COLORS = [
   'hsl(207, 90%, 68%)',
   'hsl(123, 38%, 63%)',
   'hsl(38, 92%, 65%)',
@@ -166,4 +166,4 @@ export function getStats(entries: DataEntry[]) {
   };
 }
 
-export { COLORS };
+
