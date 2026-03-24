@@ -166,4 +166,4 @@ export function getStats(entries: DataEntry[]) {
   };
 }
 
-export { COLORS };
+
