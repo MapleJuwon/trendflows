@@ -63,7 +63,7 @@ export default function SettingsView() {
 
   const items = [
     { icon: Sun, label: t("settings.appearance"), desc: t("settings.appearanceDesc"), sheet: "appearance" as const },
-    { icon: Globe, label: t("settings.language"), desc: lang === "de" ? "Deutsch" : "English", sheet: "language" as const },
+    { icon: Globe, label: t("settings.language"), desc: LANG_LABELS[lang], sheet: "language" as const },
     { icon: Bell, label: t("settings.notifications"), desc: t("settings.notificationsDesc"), sheet: "notifications" as const },
     { icon: Shield, label: t("settings.privacy"), desc: t("settings.privacyDesc"), sheet: "privacy" as const },
     { icon: Download, label: t("settings.export"), desc: t("settings.exportDesc"), sheet: "export" as const },
