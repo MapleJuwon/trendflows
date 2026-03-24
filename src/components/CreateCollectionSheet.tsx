@@ -39,10 +39,14 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const handleCreate = async () => {
     if (!title.trim() || !unit.trim()) return;
     setSaving(true);
-    await createCollection(title.trim(), unit.trim(), selectedColor);
+    const result = await createCollection(title.trim(), unit.trim(), selectedColor);
+    setSaving(false);
+    if (!result) {
+      toast.error(t("collection.createError") || "Fehler beim Erstellen");
+      return;
+    }
     setTitle("");
     setUnit("");
-    setSaving(false);
     onOpenChange(false);
     window.dispatchEvent(new Event("trendflow-refresh"));
   };
