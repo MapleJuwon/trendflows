@@ -125,7 +125,6 @@ const de = {
   "export.pngDesc": "Aktuelles Diagramm als Bild speichern",
   "settings.import": "Datenimport",
   "settings.importDesc": "Daten aus CSV importieren",
-  "settings.exportDesc": "CSV, PDF oder PNG exportieren",
   "import.title": "Datenimport",
   "import.csv": "CSV-Datei importieren",
   "import.csvDesc": "KI erkennt automatisch die Struktur deiner Daten und ordnet sie den richtigen Sammlungen zu.",
