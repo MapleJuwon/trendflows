@@ -95,7 +95,7 @@ const de = {
   "settings.privacy": "Datenschutz & Sicherheit",
   "settings.privacyDesc": "Deine Daten schützen",
   "settings.export": "Datenexport",
-  "settings.exportDesc": "CSV exportieren",
+  "settings.exportDesc": "CSV, PDF oder PNG exportieren",
   "settings.help": "Hilfe & Support",
   "settings.helpDesc": "FAQ und Kontakt",
   "settings.logout": "Abmelden",
