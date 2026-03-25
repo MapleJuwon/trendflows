@@ -923,7 +923,7 @@ const ar: Record<string, string> = {
   "settings.privacy": "الخصوصية والأمان",
   "settings.privacyDesc": "حماية بياناتك",
   "settings.export": "تصدير البيانات",
-  "settings.exportDesc": "تصدير CSV",
+  "settings.exportDesc": "تصدير CSV أو PDF أو PNG",
   "settings.help": "المساعدة والدعم",
   "settings.helpDesc": "الأسئلة الشائعة والاتصال",
   "settings.logout": "تسجيل الخروج",
