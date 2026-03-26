@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { getStats, type DataCollection } from "@/lib/store";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2 } from "lucide-react";
+import { getStats, deleteCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useI18n } from "@/lib/i18n";
+import { toast } from "sonner";
 import AddEntrySheet from "./AddEntrySheet";
 import CreateCollectionSheet from "./CreateCollectionSheet";
 
@@ -17,6 +18,14 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
   const { collections: allCollections, refresh } = useCollections();
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
+
+  const handleDelete = async (e: React.MouseEvent, col: DataCollection) => {
+    e.stopPropagation();
+    if (!window.confirm(t("dashboard.deleteConfirm", { name: col.title }))) return;
+    await deleteCollection(col.id);
+    window.dispatchEvent(new Event("trendflow-refresh"));
+    toast.success(t("dashboard.deleted"));
+  };
 
   useEffect(() => { refresh(); }, [refreshKey]);
 
@@ -36,7 +45,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
     <div className="px-5 pt-3 pb-24">
       <div className="flex items-center justify-between mb-6 animate-fade-up">
         <div>
-          <h1 className="text-2xl text-display text-foreground leading-tight">{t("dashboard.title")}</h1>
+          <h1 className="text-3xl text-display text-foreground leading-tight">{t("dashboard.title")}</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{t("dashboard.subtitle")}</p>
         </div>
         <button
@@ -83,12 +92,20 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                       <p className="text-xs text-muted-foreground">{formatDate(col.updatedAt)}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setQuickAddId(col.id); }}
-                    className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center active:scale-95 transition-transform"
-                  >
-                    <Plus className="w-4 h-4 text-accent-foreground" />
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={(e) => handleDelete(e, col)}
+                      className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform"
+                    >
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setQuickAddId(col.id); }}
+                      className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center active:scale-95 transition-transform"
+                    >
+                      <Plus className="w-4 h-4 text-accent-foreground" />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex items-end justify-between">
