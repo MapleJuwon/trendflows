@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { getStats, type DataCollection } from "@/lib/store";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2 } from "lucide-react";
+import { getStats, deleteCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useI18n } from "@/lib/i18n";
+import { toast } from "sonner";
 import AddEntrySheet from "./AddEntrySheet";
 import CreateCollectionSheet from "./CreateCollectionSheet";
 
@@ -36,7 +37,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
     <div className="px-5 pt-3 pb-24">
       <div className="flex items-center justify-between mb-6 animate-fade-up">
         <div>
-          <h1 className="text-2xl text-display text-foreground leading-tight">{t("dashboard.title")}</h1>
+          <h1 className="text-3xl text-display text-foreground leading-tight">{t("dashboard.title")}</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{t("dashboard.subtitle")}</p>
         </div>
         <button
