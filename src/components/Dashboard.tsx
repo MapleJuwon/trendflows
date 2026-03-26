@@ -19,6 +19,14 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
 
+  const handleDelete = async (e: React.MouseEvent, col: DataCollection) => {
+    e.stopPropagation();
+    if (!window.confirm(t("dashboard.deleteConfirm", { name: col.title }))) return;
+    await deleteCollection(col.id);
+    window.dispatchEvent(new Event("trendflow-refresh"));
+    toast.success(t("dashboard.deleted"));
+  };
+
   useEffect(() => { refresh(); }, [refreshKey]);
 
   const collections = allCollections.filter(c => !c.archived);
