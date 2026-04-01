@@ -302,6 +302,16 @@ const en: Record<string, string> = {
   "common.loading": "Loading...",
   "common.error": "Error",
   "common.success": "Success",
+  "charts.trend": "Trend",
+  "charts.forecast": "Forecast",
+  "charts.trendLine": "Trend line",
+  "charts.forecastDays": "Forecast ({n} days)",
+  "charts.compare": "Compare",
+  "charts.compareWith": "Compare with",
+  "charts.slope": "Trend per day",
+  "charts.rising": "rising",
+  "charts.falling": "falling",
+  "charts.stable": "stable",
 };
 
 const zh: Record<string, string> = {
