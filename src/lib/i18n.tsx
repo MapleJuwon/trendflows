@@ -1042,6 +1042,16 @@ const ar: Record<string, string> = {
   "common.loading": "جاري التحميل...",
   "common.error": "خطأ",
   "common.success": "نجاح",
+  "charts.trend": "اتجاه",
+  "charts.forecast": "توقعات",
+  "charts.trendLine": "خط الاتجاه",
+  "charts.forecastDays": "توقعات ({n} أيام)",
+  "charts.compare": "مقارنة",
+  "charts.compareWith": "مقارنة مع",
+  "charts.slope": "الاتجاه لكل يوم",
+  "charts.rising": "صاعد",
+  "charts.falling": "هابط",
+  "charts.stable": "مستقر",
 };
 
 const ja: Record<string, string> = {
