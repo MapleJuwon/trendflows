@@ -1332,6 +1332,16 @@ const ko: Record<string, string> = {
   "common.loading": "로딩 중...",
   "common.error": "오류",
   "common.success": "성공",
+  "charts.trend": "트렌드",
+  "charts.forecast": "예측",
+  "charts.trendLine": "트렌드 라인",
+  "charts.forecastDays": "예측 ({n}일)",
+  "charts.compare": "비교",
+  "charts.compareWith": "비교 대상",
+  "charts.slope": "일일 트렌드",
+  "charts.rising": "상승",
+  "charts.falling": "하락",
+  "charts.stable": "안정",
 };
 
 const translations: Record<string, Record<string, string>> = { de, en, zh, es, pt, fr, ar, ja, ko };
