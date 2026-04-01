@@ -27,7 +27,8 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
     toast.success(t("dashboard.deleted"));
   };
 
-  useEffect(() => { refresh(); }, [refreshKey]);
+  // React Query handles caching; refreshKey triggers invalidation for backward compat
+  useEffect(() => { if (refreshKey > 0) refresh(); }, [refreshKey]);
 
   const collections = allCollections.filter(c => !c.archived);
 

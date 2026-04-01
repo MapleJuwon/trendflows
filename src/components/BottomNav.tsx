@@ -1,5 +1,6 @@
 import { LayoutDashboard, BarChart3, List, User, Settings } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { usePrefetchCollections } from "@/hooks/useCollections";
 
 type Tab = "dashboard" | "charts" | "entries" | "account" | "settings";
 
@@ -8,8 +9,11 @@ interface BottomNavProps {
   onNavigate: (tab: Tab) => void;
 }
 
+const DATA_TABS: Tab[] = ["dashboard", "charts", "entries"];
+
 export default function BottomNav({ active, onNavigate }: BottomNavProps) {
   const { t } = useI18n();
+  const prefetch = usePrefetchCollections();
 
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "dashboard", label: t("nav.overview"), icon: LayoutDashboard },
@@ -29,6 +33,10 @@ export default function BottomNav({ active, onNavigate }: BottomNavProps) {
             <button
               key={tab.id}
               onClick={() => onNavigate(tab.id)}
+              onPointerEnter={() => {
+                // Prefetch data when hovering over data-dependent tabs
+                if (DATA_TABS.includes(tab.id)) prefetch();
+              }}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-200 active:scale-[0.96] ${
                 isActive ? "text-primary" : "text-muted-foreground"
               }`}
