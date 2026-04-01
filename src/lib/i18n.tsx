@@ -742,6 +742,16 @@ const pt: Record<string, string> = {
   "common.loading": "Carregando...",
   "common.error": "Erro",
   "common.success": "Sucesso",
+  "charts.trend": "Tendência",
+  "charts.forecast": "Previsão",
+  "charts.trendLine": "Linha de tendência",
+  "charts.forecastDays": "Previsão ({n} dias)",
+  "charts.compare": "Comparar",
+  "charts.compareWith": "Comparar com",
+  "charts.slope": "Tendência por dia",
+  "charts.rising": "subindo",
+  "charts.falling": "caindo",
+  "charts.stable": "estável",
 };
 
 const fr: Record<string, string> = {
