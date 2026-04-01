@@ -152,6 +152,16 @@ const de = {
   "common.loading": "Laden...",
   "common.error": "Fehler",
   "common.success": "Erfolg",
+  "charts.trend": "Trend",
+  "charts.forecast": "Prognose",
+  "charts.trendLine": "Trendlinie",
+  "charts.forecastDays": "Prognose ({n} Tage)",
+  "charts.compare": "Vergleichen",
+  "charts.compareWith": "Vergleichen mit",
+  "charts.slope": "Trend pro Tag",
+  "charts.rising": "steigend",
+  "charts.falling": "fallend",
+  "charts.stable": "stabil",
 } as const;
 
 const en: Record<string, string> = {
