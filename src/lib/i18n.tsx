@@ -152,6 +152,16 @@ const de = {
   "common.loading": "Laden...",
   "common.error": "Fehler",
   "common.success": "Erfolg",
+  "charts.trend": "Trend",
+  "charts.forecast": "Prognose",
+  "charts.trendLine": "Trendlinie",
+  "charts.forecastDays": "Prognose ({n} Tage)",
+  "charts.compare": "Vergleichen",
+  "charts.compareWith": "Vergleichen mit",
+  "charts.slope": "Trend pro Tag",
+  "charts.rising": "steigend",
+  "charts.falling": "fallend",
+  "charts.stable": "stabil",
 } as const;
 
 const en: Record<string, string> = {
@@ -292,6 +302,16 @@ const en: Record<string, string> = {
   "common.loading": "Loading...",
   "common.error": "Error",
   "common.success": "Success",
+  "charts.trend": "Trend",
+  "charts.forecast": "Forecast",
+  "charts.trendLine": "Trend line",
+  "charts.forecastDays": "Forecast ({n} days)",
+  "charts.compare": "Compare",
+  "charts.compareWith": "Compare with",
+  "charts.slope": "Trend per day",
+  "charts.rising": "rising",
+  "charts.falling": "falling",
+  "charts.stable": "stable",
 };
 
 const zh: Record<string, string> = {
@@ -432,6 +452,16 @@ const zh: Record<string, string> = {
   "common.loading": "加载中...",
   "common.error": "错误",
   "common.success": "成功",
+  "charts.trend": "趋势",
+  "charts.forecast": "预测",
+  "charts.trendLine": "趋势线",
+  "charts.forecastDays": "预测（{n}天）",
+  "charts.compare": "比较",
+  "charts.compareWith": "与…比较",
+  "charts.slope": "每日趋势",
+  "charts.rising": "上升",
+  "charts.falling": "下降",
+  "charts.stable": "稳定",
 };
 
 const es: Record<string, string> = {
@@ -572,6 +602,16 @@ const es: Record<string, string> = {
   "common.loading": "Cargando...",
   "common.error": "Error",
   "common.success": "Éxito",
+  "charts.trend": "Tendencia",
+  "charts.forecast": "Pronóstico",
+  "charts.trendLine": "Línea de tendencia",
+  "charts.forecastDays": "Pronóstico ({n} días)",
+  "charts.compare": "Comparar",
+  "charts.compareWith": "Comparar con",
+  "charts.slope": "Tendencia por día",
+  "charts.rising": "subiendo",
+  "charts.falling": "bajando",
+  "charts.stable": "estable",
 };
 
 const pt: Record<string, string> = {
@@ -712,6 +752,16 @@ const pt: Record<string, string> = {
   "common.loading": "Carregando...",
   "common.error": "Erro",
   "common.success": "Sucesso",
+  "charts.trend": "Tendência",
+  "charts.forecast": "Previsão",
+  "charts.trendLine": "Linha de tendência",
+  "charts.forecastDays": "Previsão ({n} dias)",
+  "charts.compare": "Comparar",
+  "charts.compareWith": "Comparar com",
+  "charts.slope": "Tendência por dia",
+  "charts.rising": "subindo",
+  "charts.falling": "caindo",
+  "charts.stable": "estável",
 };
 
 const fr: Record<string, string> = {
@@ -852,6 +902,16 @@ const fr: Record<string, string> = {
   "common.loading": "Chargement...",
   "common.error": "Erreur",
   "common.success": "Succès",
+  "charts.trend": "Tendance",
+  "charts.forecast": "Prévision",
+  "charts.trendLine": "Ligne de tendance",
+  "charts.forecastDays": "Prévision ({n} jours)",
+  "charts.compare": "Comparer",
+  "charts.compareWith": "Comparer avec",
+  "charts.slope": "Tendance par jour",
+  "charts.rising": "en hausse",
+  "charts.falling": "en baisse",
+  "charts.stable": "stable",
 };
 
 const ar: Record<string, string> = {
@@ -992,6 +1052,16 @@ const ar: Record<string, string> = {
   "common.loading": "جاري التحميل...",
   "common.error": "خطأ",
   "common.success": "نجاح",
+  "charts.trend": "اتجاه",
+  "charts.forecast": "توقعات",
+  "charts.trendLine": "خط الاتجاه",
+  "charts.forecastDays": "توقعات ({n} أيام)",
+  "charts.compare": "مقارنة",
+  "charts.compareWith": "مقارنة مع",
+  "charts.slope": "الاتجاه لكل يوم",
+  "charts.rising": "صاعد",
+  "charts.falling": "هابط",
+  "charts.stable": "مستقر",
 };
 
 const ja: Record<string, string> = {
@@ -1132,6 +1202,16 @@ const ja: Record<string, string> = {
   "common.loading": "読み込み中...",
   "common.error": "エラー",
   "common.success": "成功",
+  "charts.trend": "トレンド",
+  "charts.forecast": "予測",
+  "charts.trendLine": "トレンドライン",
+  "charts.forecastDays": "予測（{n}日間）",
+  "charts.compare": "比較",
+  "charts.compareWith": "と比較",
+  "charts.slope": "1日あたりのトレンド",
+  "charts.rising": "上昇",
+  "charts.falling": "下降",
+  "charts.stable": "安定",
 };
 
 const ko: Record<string, string> = {
@@ -1272,6 +1352,16 @@ const ko: Record<string, string> = {
   "common.loading": "로딩 중...",
   "common.error": "오류",
   "common.success": "성공",
+  "charts.trend": "트렌드",
+  "charts.forecast": "예측",
+  "charts.trendLine": "트렌드 라인",
+  "charts.forecastDays": "예측 ({n}일)",
+  "charts.compare": "비교",
+  "charts.compareWith": "비교 대상",
+  "charts.slope": "일일 트렌드",
+  "charts.rising": "상승",
+  "charts.falling": "하락",
+  "charts.stable": "안정",
 };
 
 const translations: Record<string, Record<string, string>> = { de, en, zh, es, pt, fr, ar, ja, ko };
