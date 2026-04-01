@@ -84,7 +84,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
 
   return (
     <div className="px-5 pt-3 pb-24">
-      <div className="flex items-center justify-between mb-4 animate-fade-up">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl text-display text-foreground">{t("charts.title")}</h1>
         <div className="flex items-center gap-2">
           {activeId && (
@@ -118,7 +118,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-4 animate-fade-up" style={{ animationDelay: "80ms" }}>
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
         {collections.map(c => (
           <button key={c.id} onClick={() => setActiveId(c.id)}
             className={`flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all active:scale-95 ${activeId === c.id ? "text-primary-foreground card-shadow" : "bg-muted text-muted-foreground"}`}
@@ -130,7 +130,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
 
       {col && (
         <>
-          <div className="flex gap-1 bg-muted rounded-xl p-1 mb-5 animate-fade-up" style={{ animationDelay: "160ms" }}>
+          <div className="flex gap-1 bg-muted rounded-xl p-1 mb-5">
             {RANGES.map((r, i) => (
               <button key={r.label} onClick={() => setRangeIdx(i)}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-all ${rangeIdx === i ? "bg-card text-foreground card-shadow" : "text-muted-foreground"}`}>
@@ -139,7 +139,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
             ))}
           </div>
 
-          <div className="bg-card rounded-2xl p-4 card-shadow mb-5 animate-fade-up" style={{ animationDelay: "240ms" }}>
+          <div className="bg-card rounded-2xl p-4 card-shadow mb-5">
             {chartData.length > 0 ? (
               <div className="h-52">
                 <ResponsiveContainer width="100%" height="100%">
@@ -191,7 +191,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
           </div>
 
           {selectedEntry && col && (
-            <div className="bg-card rounded-2xl p-4 card-shadow mb-5 animate-fade-up flex items-center justify-between">
+            <div className="bg-card rounded-2xl p-4 card-shadow mb-5 flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground mb-0.5">{t("charts.selectedDay")}</p>
                 <p className="text-sm font-semibold text-foreground">
@@ -206,7 +206,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
           )}
 
           {stats && (
-            <div className="grid grid-cols-2 gap-3 animate-fade-up" style={{ animationDelay: "320ms" }}>
+            <div className="grid grid-cols-2 gap-3">
               {[
                 { label: t("charts.average"), value: stats.avg },
                 { label: t("charts.minimum"), value: stats.min },

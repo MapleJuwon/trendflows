@@ -44,7 +44,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
 
   return (
     <div className="px-5 pt-3 pb-24">
-      <div className="flex items-center justify-between mb-6 animate-fade-up">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl text-display text-foreground leading-tight">{t("dashboard.title")}</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{t("dashboard.subtitle")}</p>
@@ -58,7 +58,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
       </div>
 
       {collections.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 animate-fade-up" style={{ animationDelay: "100ms" }}>
+        <div className="flex flex-col items-center justify-center py-20">
           <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mb-4">
             <Plus className="w-7 h-7 text-primary" />
           </div>
@@ -81,7 +81,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
             return (
               <div
                 key={col.id}
-                className="bg-card rounded-2xl p-4 card-shadow active:scale-[0.98] transition-all duration-200 cursor-pointer animate-fade-up"
+                className="bg-card rounded-2xl p-4 card-shadow active:scale-[0.98] transition-all duration-200 cursor-pointer"
                 style={{ animationDelay: `${(i + 1) * 80}ms` }}
                 onClick={() => onOpenCollection(col.id)}
               >

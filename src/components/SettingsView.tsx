@@ -198,11 +198,11 @@ export default function SettingsView() {
 
   return (
     <div className="px-5 pt-3 pb-24">
-      <h1 className="text-2xl text-display text-foreground mb-6 animate-fade-up">{t("settings.title")}</h1>
+      <h1 className="text-2xl text-display text-foreground mb-6">{t("settings.title")}</h1>
       <div className="space-y-2">
         {items.map((item, i) => (
           <div key={item.label} onClick={() => setOpenSheet(item.sheet)}
-            className="bg-card rounded-xl p-4 card-shadow flex items-center gap-3.5 active:scale-[0.98] transition-transform cursor-pointer animate-fade-up"
+            className="bg-card rounded-xl p-4 card-shadow flex items-center gap-3.5 active:scale-[0.98] transition-transform cursor-pointer"
             style={{ animationDelay: `${(i + 1) * 60}ms` }}>
             <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
               <item.icon className="w-5 h-5 text-accent-foreground" />
@@ -218,8 +218,8 @@ export default function SettingsView() {
 
       {user && (
         <button onClick={() => signOut()}
-          className="w-full mt-6 h-12 rounded-xl border border-destructive text-destructive font-semibold text-sm active:scale-[0.98] transition-transform animate-fade-up"
-          style={{ animationDelay: "500ms" }}>
+          className="w-full mt-6 h-12 rounded-xl border border-destructive text-destructive font-semibold text-sm active:scale-[0.98] transition-transform"
+         >
           {t("settings.logout")}
         </button>
       )}
