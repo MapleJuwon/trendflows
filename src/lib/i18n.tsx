@@ -1202,6 +1202,16 @@ const ja: Record<string, string> = {
   "common.loading": "読み込み中...",
   "common.error": "エラー",
   "common.success": "成功",
+  "charts.trend": "トレンド",
+  "charts.forecast": "予測",
+  "charts.trendLine": "トレンドライン",
+  "charts.forecastDays": "予測（{n}日間）",
+  "charts.compare": "比較",
+  "charts.compareWith": "と比較",
+  "charts.slope": "1日あたりのトレンド",
+  "charts.rising": "上昇",
+  "charts.falling": "下降",
+  "charts.stable": "安定",
 };
 
 const ko: Record<string, string> = {
