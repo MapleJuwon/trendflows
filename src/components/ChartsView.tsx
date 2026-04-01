@@ -32,7 +32,7 @@ export default function ChartsView({ selectedId, refreshKey }: Props) {
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
-  useEffect(() => { refresh(); }, [refreshKey]);
+  useEffect(() => { if (refreshKey > 0) refresh(); }, [refreshKey]);
 
   const collections = allCollections.filter(c => !c.archived && c.entries.length > 0);
 
