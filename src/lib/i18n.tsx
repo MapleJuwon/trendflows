@@ -452,6 +452,16 @@ const zh: Record<string, string> = {
   "common.loading": "加载中...",
   "common.error": "错误",
   "common.success": "成功",
+  "charts.trend": "趋势",
+  "charts.forecast": "预测",
+  "charts.trendLine": "趋势线",
+  "charts.forecastDays": "预测（{n}天）",
+  "charts.compare": "比较",
+  "charts.compareWith": "与…比较",
+  "charts.slope": "每日趋势",
+  "charts.rising": "上升",
+  "charts.falling": "下降",
+  "charts.stable": "稳定",
 };
 
 const es: Record<string, string> = {
