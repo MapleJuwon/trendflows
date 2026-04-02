@@ -12,7 +12,8 @@ interface Props {
 }
 
 export default function AddEntrySheet({ collectionId, open, onOpenChange }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { collections } = useCollections();
   const today = new Date().toISOString().split("T")[0];
   const [date, setDate] = useState(today);
   const [value, setValue] = useState("");
