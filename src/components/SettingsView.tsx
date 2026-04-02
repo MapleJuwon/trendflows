@@ -271,8 +271,14 @@ export default function SettingsView() {
           <SheetHeader className="mb-5"><SheetTitle className="text-display text-lg">{t("notifications.title")}</SheetTitle></SheetHeader>
           <div className="space-y-3">
             <NotificationToggle label={t("notifications.daily")} desc={t("notifications.dailyDesc")} storageKey="trendflow_notif_daily" />
-            <NotificationToggle label={t("notifications.weekly")} desc={t("notifications.weeklyDesc")} storageKey="trendflow_notif_weekly" />
-            <p className="text-xs text-muted-foreground pt-2">{t("notifications.notSupported")}</p>
+            <NotificationToggle label={t("notifications.goal")} desc={t("notifications.goalDesc")} storageKey="trendflow_notif_goal" />
+            <ReminderTimePicker />
+            {!("Notification" in window) && (
+              <p className="text-xs text-muted-foreground pt-2">{t("notifications.notSupported")}</p>
+            )}
+            {"Notification" in window && Notification.permission === "denied" && (
+              <p className="text-xs text-destructive pt-2">{t("notifications.blocked")}</p>
+            )}
           </div>
         </SheetContent>
       </Sheet>
