@@ -88,6 +88,7 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const { t, lang } = useI18n();
   const [title, setTitle] = useState("");
   const [unit, setUnit] = useState("");
+  const [goalValue, setGoalValue] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [saving, setSaving] = useState(false);
 
