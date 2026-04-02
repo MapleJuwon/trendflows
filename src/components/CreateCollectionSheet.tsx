@@ -88,6 +88,7 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const { t, lang } = useI18n();
   const [title, setTitle] = useState("");
   const [unit, setUnit] = useState("");
+  const [goalValue, setGoalValue] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [saving, setSaving] = useState(false);
 
@@ -96,7 +97,8 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const handleCreate = async () => {
     if (!title.trim() || !unit.trim()) return;
     setSaving(true);
-    const result = await createCollection(title.trim(), unit.trim(), selectedColor);
+    const goal = goalValue.trim() ? parseFloat(goalValue.trim()) : undefined;
+    const result = await createCollection(title.trim(), unit.trim(), selectedColor, goal);
     setSaving(false);
     if (!result) {
       toast.error("Fehler beim Erstellen der Sammlung");
@@ -104,6 +106,7 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
     }
     setTitle("");
     setUnit("");
+    setGoalValue("");
     onOpenChange(false);
     window.dispatchEvent(new Event("trendflow-refresh"));
   };
@@ -131,6 +134,11 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("collection.unit")}</label>
             <input value={unit} onChange={e => setUnit(e.target.value)} placeholder={t("collection.unitPlaceholder")}
+              className="w-full h-12 px-4 rounded-xl bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("collection.goal")}</label>
+            <input value={goalValue} onChange={e => setGoalValue(e.target.value)} placeholder={t("collection.goalPlaceholder")} type="number" step="any"
               className="w-full h-12 px-4 rounded-xl bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
           <div>

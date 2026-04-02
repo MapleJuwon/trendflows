@@ -70,16 +70,24 @@ export async function fetchCollections(): Promise<DataCollection[]> {
   }));
 }
 
-export async function createCollection(title: string, unit: string, color?: string): Promise<DataCollection | null> {
+export async function createCollection(title: string, unit: string, color?: string, goalValue?: number): Promise<DataCollection | null> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
   const allCols = await fetchCollections();
   const finalColor = color || COLORS[allCols.length % COLORS.length];
 
+  const insertData = {
+    user_id: user.id,
+    title,
+    unit,
+    color: finalColor,
+    ...(goalValue !== undefined && !isNaN(goalValue) ? { goal_value: goalValue } : {}),
+  };
+
   const { data, error } = await supabase
     .from("collections")
-    .insert({ user_id: user.id, title, unit, color: finalColor })
+    .insert(insertData)
     .select()
     .single();
 
