@@ -25,6 +25,12 @@ export default function AddEntrySheet({ collectionId, open, onOpenChange }: Prop
     if (isNaN(num)) return;
     setSaving(true);
     await addEntry(collectionId, date, num, note.trim() || undefined);
+    
+    // Check goal notification
+    const col = collections.find(c => c.id === collectionId);
+    if (col?.goalValue) {
+      notifyGoalReached(col.title, num, col.goalValue, col.unit, lang);
+    }
     setValue("");
     setNote("");
     setDate(today);
