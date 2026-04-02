@@ -7,6 +7,7 @@ import AccountView from "@/components/AccountView";
 import SettingsView from "@/components/SettingsView";
 import AuthScreen from "@/components/AuthScreen";
 import { useAuth } from "@/lib/auth";
+import { useDailyReminder } from "@/hooks/useNotifications";
 
 export default function Index() {
   const { user, loading } = useAuth();
