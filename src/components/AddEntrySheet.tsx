@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { addEntry } from "@/lib/store";
 import { useI18n } from "@/lib/i18n";
+import { useCollections } from "@/hooks/useCollections";
+import { notifyGoalReached } from "@/hooks/useNotifications";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface Props {
