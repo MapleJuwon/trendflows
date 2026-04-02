@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { Sun, Moon, Globe, Bell, Shield, Download, Upload, HelpCircle, ChevronRight, Check, Trash2, MessageCircle, FileText, Image, FileSpreadsheet, Loader2 } from "lucide-react";
+import { Sun, Moon, Globe, Bell, Shield, Download, Upload, HelpCircle, ChevronRight, Check, Trash2, MessageCircle, FileText, Image, FileSpreadsheet, Loader2, Clock } from "lucide-react";
+import { requestNotificationPermission, canNotify } from "@/hooks/useNotifications";
 import { useI18n, type Lang, LANG_LABELS } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { fetchCollections, deleteAllData, createCollection, addEntry, COLORS } from "@/lib/store";
