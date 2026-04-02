@@ -97,7 +97,8 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
   const handleCreate = async () => {
     if (!title.trim() || !unit.trim()) return;
     setSaving(true);
-    const result = await createCollection(title.trim(), unit.trim(), selectedColor);
+    const goal = goalValue.trim() ? parseFloat(goalValue.trim()) : undefined;
+    const result = await createCollection(title.trim(), unit.trim(), selectedColor, goal);
     setSaving(false);
     if (!result) {
       toast.error("Fehler beim Erstellen der Sammlung");
@@ -105,6 +106,7 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
     }
     setTitle("");
     setUnit("");
+    setGoalValue("");
     onOpenChange(false);
     window.dispatchEvent(new Event("trendflow-refresh"));
   };
