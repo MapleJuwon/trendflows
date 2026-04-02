@@ -145,6 +145,28 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                     </div>
                   )}
                 </div>
+
+                {col.goalValue && stats ? (() => {
+                  const percent = Math.min(100, Math.round((stats.latest.value / col.goalValue) * 100));
+                  return (
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] font-medium text-muted-foreground">
+                          {t("dashboard.goalProgress", { percent })}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground tabular-nums">
+                          {stats.latest.value} / {col.goalValue} {col.unit}
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ width: `${percent}%`, backgroundColor: col.color }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })() : null}
               </div>
             );
           })}

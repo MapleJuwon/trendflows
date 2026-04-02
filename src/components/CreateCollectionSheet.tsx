@@ -137,6 +137,11 @@ export default function CreateCollectionSheet({ open, onOpenChange }: Props) {
               className="w-full h-12 px-4 rounded-xl bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
           <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("collection.goal")}</label>
+            <input value={goalValue} onChange={e => setGoalValue(e.target.value)} placeholder={t("collection.goalPlaceholder")} type="number" step="any"
+              className="w-full h-12 px-4 rounded-xl bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+          </div>
+          <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("collection.color")}</label>
             <div className="flex gap-2">
               {COLORS.map(c => (
