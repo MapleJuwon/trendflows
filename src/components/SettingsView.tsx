@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { Sun, Moon, Globe, Bell, Shield, Download, Upload, HelpCircle, ChevronRight, Check, Trash2, MessageCircle, FileText, Image, FileSpreadsheet, Loader2 } from "lucide-react";
+import { Sun, Moon, Globe, Bell, Shield, Download, Upload, HelpCircle, ChevronRight, Check, Trash2, MessageCircle, FileText, Image, FileSpreadsheet, Loader2, Clock } from "lucide-react";
+import { requestNotificationPermission, canNotify } from "@/hooks/useNotifications";
 import { useI18n, type Lang, LANG_LABELS } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { fetchCollections, deleteAllData, createCollection, addEntry, COLORS } from "@/lib/store";
@@ -270,8 +271,14 @@ export default function SettingsView() {
           <SheetHeader className="mb-5"><SheetTitle className="text-display text-lg">{t("notifications.title")}</SheetTitle></SheetHeader>
           <div className="space-y-3">
             <NotificationToggle label={t("notifications.daily")} desc={t("notifications.dailyDesc")} storageKey="trendflow_notif_daily" />
-            <NotificationToggle label={t("notifications.weekly")} desc={t("notifications.weeklyDesc")} storageKey="trendflow_notif_weekly" />
-            <p className="text-xs text-muted-foreground pt-2">{t("notifications.notSupported")}</p>
+            <NotificationToggle label={t("notifications.goal")} desc={t("notifications.goalDesc")} storageKey="trendflow_notif_goal" />
+            <ReminderTimePicker />
+            {!("Notification" in window) && (
+              <p className="text-xs text-muted-foreground pt-2">{t("notifications.notSupported")}</p>
+            )}
+            {"Notification" in window && Notification.permission === "denied" && (
+              <p className="text-xs text-destructive pt-2">{t("notifications.blocked")}</p>
+            )}
           </div>
         </SheetContent>
       </Sheet>
@@ -373,7 +380,15 @@ export default function SettingsView() {
 
 function NotificationToggle({ label, desc, storageKey }: { label: string; desc: string; storageKey: string }) {
   const [enabled, setEnabled] = useState(() => localStorage.getItem(storageKey) === "true");
-  const toggle = () => { const next = !enabled; setEnabled(next); localStorage.setItem(storageKey, String(next)); };
+  const toggle = async () => {
+    if (!enabled) {
+      const granted = await requestNotificationPermission();
+      if (!granted) return;
+    }
+    const next = !enabled;
+    setEnabled(next);
+    localStorage.setItem(storageKey, String(next));
+  };
   return (
     <button onClick={toggle} className="w-full p-4 rounded-xl bg-muted flex items-center justify-between active:scale-[0.98] transition-transform">
       <div>
@@ -384,5 +399,32 @@ function NotificationToggle({ label, desc, storageKey }: { label: string; desc: 
         <div className={`w-5 h-5 rounded-full bg-card transition-transform ${enabled ? "translate-x-5" : "translate-x-0"}`} />
       </div>
     </button>
+  );
+}
+
+function ReminderTimePicker() {
+  const { t } = useI18n();
+  const [hour, setHour] = useState(() => parseInt(localStorage.getItem("trendflow_reminder_hour") || "20", 10));
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const h = parseInt(e.target.value, 10);
+    setHour(h);
+    localStorage.setItem("trendflow_reminder_hour", String(h));
+  };
+  return (
+    <div className="w-full p-4 rounded-xl bg-muted flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Clock className="w-4 h-4 text-muted-foreground" />
+        <div>
+          <p className="text-sm font-medium text-foreground">{t("notifications.reminderTime")}</p>
+          <p className="text-xs text-muted-foreground">{t("notifications.reminderTimeDesc")}</p>
+        </div>
+      </div>
+      <select value={hour} onChange={handleChange}
+        className="bg-card text-foreground text-sm rounded-lg px-2 py-1 border border-border focus:outline-none focus:ring-2 focus:ring-ring">
+        {Array.from({ length: 24 }, (_, i) => (
+          <option key={i} value={i}>{String(i).padStart(2, "0")}:00</option>
+        ))}
+      </select>
+    </div>
   );
 }

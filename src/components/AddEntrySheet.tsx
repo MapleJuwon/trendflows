@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { addEntry } from "@/lib/store";
 import { useI18n } from "@/lib/i18n";
+import { useCollections } from "@/hooks/useCollections";
+import { notifyGoalReached } from "@/hooks/useNotifications";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface Props {
@@ -10,7 +12,8 @@ interface Props {
 }
 
 export default function AddEntrySheet({ collectionId, open, onOpenChange }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { collections } = useCollections();
   const today = new Date().toISOString().split("T")[0];
   const [date, setDate] = useState(today);
   const [value, setValue] = useState("");
@@ -22,6 +25,12 @@ export default function AddEntrySheet({ collectionId, open, onOpenChange }: Prop
     if (isNaN(num)) return;
     setSaving(true);
     await addEntry(collectionId, date, num, note.trim() || undefined);
+    
+    // Check goal notification
+    const col = collections.find(c => c.id === collectionId);
+    if (col?.goalValue) {
+      notifyGoalReached(col.title, num, col.goalValue, col.unit, lang);
+    }
     setValue("");
     setNote("");
     setDate(today);

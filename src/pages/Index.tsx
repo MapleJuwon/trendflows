@@ -7,6 +7,7 @@ import AccountView from "@/components/AccountView";
 import SettingsView from "@/components/SettingsView";
 import AuthScreen from "@/components/AuthScreen";
 import { useAuth } from "@/lib/auth";
+import { useDailyReminder } from "@/hooks/useNotifications";
 
 export default function Index() {
   const { user, loading } = useAuth();
@@ -15,6 +16,7 @@ export default function Index() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refresh = useCallback(() => setRefreshKey(k => k + 1), []);
+  useDailyReminder();
 
   useEffect(() => {
     window.addEventListener("trendflow-refresh", refresh);
