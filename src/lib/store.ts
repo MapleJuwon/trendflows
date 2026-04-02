@@ -77,8 +77,13 @@ export async function createCollection(title: string, unit: string, color?: stri
   const allCols = await fetchCollections();
   const finalColor = color || COLORS[allCols.length % COLORS.length];
 
-  const insertData: Record<string, unknown> = { user_id: user.id, title, unit, color: finalColor };
-  if (goalValue !== undefined && !isNaN(goalValue)) insertData.goal_value = goalValue;
+  const insertData = {
+    user_id: user.id,
+    title,
+    unit,
+    color: finalColor,
+    ...(goalValue !== undefined && !isNaN(goalValue) ? { goal_value: goalValue } : {}),
+  };
 
   const { data, error } = await supabase
     .from("collections")
