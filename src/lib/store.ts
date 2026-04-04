@@ -17,6 +17,7 @@ export interface DataCollection {
   createdAt: string;
   updatedAt: string;
   archived?: boolean;
+  sortOrder: number;
 }
 
 export const COLORS = [
@@ -34,6 +35,7 @@ export async function fetchCollections(): Promise<DataCollection[]> {
   const { data: cols, error: colErr } = await supabase
     .from("collections")
     .select("*")
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (colErr || !cols) return [];
@@ -67,6 +69,7 @@ export async function fetchCollections(): Promise<DataCollection[]> {
     createdAt: c.created_at,
     updatedAt: c.updated_at,
     archived: c.archived,
+    sortOrder: c.sort_order ?? 0,
   }));
 }
 
@@ -103,6 +106,7 @@ export async function createCollection(title: string, unit: string, color?: stri
     createdAt: data.created_at,
     updatedAt: data.updated_at,
     archived: data.archived,
+    sortOrder: data.sort_order ?? 0,
   };
 }
 
@@ -152,6 +156,13 @@ export async function updateCollection(collectionId: string, data: Partial<DataC
   if (data.archived !== undefined) upd.archived = data.archived;
 
   await supabase.from("collections").update(upd).eq("id", collectionId);
+}
+
+export async function updateCollectionOrder(orderedIds: string[]) {
+  const promises = orderedIds.map((id, index) =>
+    supabase.from("collections").update({ sort_order: index }).eq("id", id)
+  );
+  await Promise.all(promises);
 }
 
 export async function deleteAllData() {
