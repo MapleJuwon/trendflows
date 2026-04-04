@@ -168,6 +168,8 @@ const de = {
   "charts.rising": "steigend",
   "charts.falling": "fallend",
   "charts.stable": "stabil",
+  "dashboard.streak": "{n} Tage Streak 🔥",
+  "dashboard.streakNone": "Noch kein Streak",
 } as const;
 
 const en: Record<string, string> = {
