@@ -35,6 +35,7 @@ export async function fetchCollections(): Promise<DataCollection[]> {
   const { data: cols, error: colErr } = await supabase
     .from("collections")
     .select("*")
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (colErr || !cols) return [];
