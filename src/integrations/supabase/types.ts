@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           goal_value: number | null
           id: string
+          sort_order: number
           title: string
           unit: string
           updated_at: string
@@ -32,6 +33,7 @@ export type Database = {
           created_at?: string
           goal_value?: number | null
           id?: string
+          sort_order?: number
           title: string
           unit: string
           updated_at?: string
@@ -43,6 +45,7 @@ export type Database = {
           created_at?: string
           goal_value?: number | null
           id?: string
+          sort_order?: number
           title?: string
           unit?: string
           updated_at?: string
