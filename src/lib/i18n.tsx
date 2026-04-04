@@ -800,6 +800,8 @@ const pt: Record<string, string> = {
   "charts.rising": "subindo",
   "charts.falling": "caindo",
   "charts.stable": "estável",
+  "dashboard.streak": "Sequência de {n} dias 🔥",
+  "dashboard.streakNone": "Sem sequência ainda",
 };
 
 const fr: Record<string, string> = {
