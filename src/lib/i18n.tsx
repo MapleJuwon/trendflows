@@ -168,6 +168,8 @@ const de = {
   "charts.rising": "steigend",
   "charts.falling": "fallend",
   "charts.stable": "stabil",
+  "dashboard.streak": "{n} Tage Streak 🔥",
+  "dashboard.streakNone": "Noch kein Streak",
 } as const;
 
 const en: Record<string, string> = {
@@ -324,6 +326,8 @@ const en: Record<string, string> = {
   "charts.rising": "rising",
   "charts.falling": "falling",
   "charts.stable": "stable",
+  "dashboard.streak": "{n} Day Streak 🔥",
+  "dashboard.streakNone": "No streak yet",
 };
 
 const zh: Record<string, string> = {
@@ -480,6 +484,8 @@ const zh: Record<string, string> = {
   "charts.rising": "上升",
   "charts.falling": "下降",
   "charts.stable": "稳定",
+  "dashboard.streak": "{n} 天连续 🔥",
+  "dashboard.streakNone": "暂无连续记录",
 };
 
 const es: Record<string, string> = {
@@ -636,6 +642,8 @@ const es: Record<string, string> = {
   "charts.rising": "subiendo",
   "charts.falling": "bajando",
   "charts.stable": "estable",
+  "dashboard.streak": "Racha de {n} días 🔥",
+  "dashboard.streakNone": "Sin racha aún",
 };
 
 const pt: Record<string, string> = {
@@ -792,6 +800,8 @@ const pt: Record<string, string> = {
   "charts.rising": "subindo",
   "charts.falling": "caindo",
   "charts.stable": "estável",
+  "dashboard.streak": "Sequência de {n} dias 🔥",
+  "dashboard.streakNone": "Sem sequência ainda",
 };
 
 const fr: Record<string, string> = {
@@ -948,6 +958,8 @@ const fr: Record<string, string> = {
   "charts.rising": "en hausse",
   "charts.falling": "en baisse",
   "charts.stable": "stable",
+  "dashboard.streak": "Série de {n} jours 🔥",
+  "dashboard.streakNone": "Pas encore de série",
 };
 
 const ar: Record<string, string> = {
@@ -1104,6 +1116,8 @@ const ar: Record<string, string> = {
   "charts.rising": "صاعد",
   "charts.falling": "هابط",
   "charts.stable": "مستقر",
+  "dashboard.streak": "سلسلة {n} يوم 🔥",
+  "dashboard.streakNone": "لا توجد سلسلة بعد",
 };
 
 const ja: Record<string, string> = {
@@ -1260,6 +1274,8 @@ const ja: Record<string, string> = {
   "charts.rising": "上昇",
   "charts.falling": "下降",
   "charts.stable": "安定",
+  "dashboard.streak": "{n}日連続 🔥",
+  "dashboard.streakNone": "まだ連続記録なし",
 };
 
 const ko: Record<string, string> = {
@@ -1416,6 +1432,8 @@ const ko: Record<string, string> = {
   "charts.rising": "상승",
   "charts.falling": "하락",
   "charts.stable": "안정",
+  "dashboard.streak": "{n}일 연속 🔥",
+  "dashboard.streakNone": "아직 연속 기록 없음",
 };
 
 const translations: Record<string, Record<string, string>> = { de, en, zh, es, pt, fr, ar, ja, ko };

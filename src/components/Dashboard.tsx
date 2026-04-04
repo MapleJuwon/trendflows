@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus, Trash2 } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2, Flame } from "lucide-react";
 import { getStats, deleteCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
@@ -32,6 +32,22 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
 
   const collections = allCollections.filter(c => !c.archived);
 
+  const streak = useMemo(() => {
+    const allDates = new Set<string>();
+    allCollections.forEach(c => c.entries.forEach(e => allDates.add(e.date)));
+    if (allDates.size === 0) return 0;
+    let count = 0;
+    const today = new Date();
+    for (let i = 0; i < 9999; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      if (allDates.has(key)) count++;
+      else break;
+    }
+    return count;
+  }, [allCollections]);
+
   const formatDate = (iso: string) => {
     const d = new Date(iso);
     const now = new Date();
@@ -56,6 +72,25 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
           <Plus className="w-5 h-5 text-primary-foreground" />
         </button>
       </div>
+
+      {/* Streak Widget */}
+      {collections.length > 0 && (
+        <div className="mb-4 p-4 rounded-2xl bg-card card-shadow flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${streak > 0 ? 'bg-orange-500/15' : 'bg-muted'}`}>
+            <Flame className={`w-5 h-5 ${streak > 0 ? 'text-orange-500' : 'text-muted-foreground'}`} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              {streak > 0 ? t("dashboard.streak", { n: streak }) : t("dashboard.streakNone")}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {streak > 0
+                ? (streak >= 7 ? "🏆" : streak >= 3 ? "💪" : "🌱")
+                : ""}
+            </p>
+          </div>
+        </div>
+      )}
 
       {collections.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
