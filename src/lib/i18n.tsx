@@ -1116,6 +1116,8 @@ const ar: Record<string, string> = {
   "charts.rising": "صاعد",
   "charts.falling": "هابط",
   "charts.stable": "مستقر",
+  "dashboard.streak": "سلسلة {n} يوم 🔥",
+  "dashboard.streakNone": "لا توجد سلسلة بعد",
 };
 
 const ja: Record<string, string> = {
