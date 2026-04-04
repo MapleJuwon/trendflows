@@ -958,6 +958,8 @@ const fr: Record<string, string> = {
   "charts.rising": "en hausse",
   "charts.falling": "en baisse",
   "charts.stable": "stable",
+  "dashboard.streak": "Série de {n} jours 🔥",
+  "dashboard.streakNone": "Pas encore de série",
 };
 
 const ar: Record<string, string> = {
