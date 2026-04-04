@@ -642,6 +642,8 @@ const es: Record<string, string> = {
   "charts.rising": "subiendo",
   "charts.falling": "bajando",
   "charts.stable": "estable",
+  "dashboard.streak": "Racha de {n} días 🔥",
+  "dashboard.streakNone": "Sin racha aún",
 };
 
 const pt: Record<string, string> = {
