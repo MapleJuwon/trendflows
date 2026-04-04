@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus, Trash2 } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2, Flame } from "lucide-react";
 import { getStats, deleteCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
