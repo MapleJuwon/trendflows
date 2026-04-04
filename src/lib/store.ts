@@ -17,6 +17,7 @@ export interface DataCollection {
   createdAt: string;
   updatedAt: string;
   archived?: boolean;
+  sortOrder: number;
 }
 
 export const COLORS = [
