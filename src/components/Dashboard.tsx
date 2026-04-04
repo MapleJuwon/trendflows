@@ -73,6 +73,25 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
         </button>
       </div>
 
+      {/* Streak Widget */}
+      {collections.length > 0 && (
+        <div className="mb-4 p-4 rounded-2xl bg-card card-shadow flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${streak > 0 ? 'bg-orange-500/15' : 'bg-muted'}`}>
+            <Flame className={`w-5 h-5 ${streak > 0 ? 'text-orange-500' : 'text-muted-foreground'}`} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              {streak > 0 ? t("dashboard.streak", { n: streak }) : t("dashboard.streakNone")}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {streak > 0
+                ? (streak >= 7 ? "🏆" : streak >= 3 ? "💪" : "🌱")
+                : ""}
+            </p>
+          </div>
+        </div>
+      )}
+
       {collections.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mb-4">
