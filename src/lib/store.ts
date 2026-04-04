@@ -157,6 +157,13 @@ export async function updateCollection(collectionId: string, data: Partial<DataC
   await supabase.from("collections").update(upd).eq("id", collectionId);
 }
 
+export async function updateCollectionOrder(orderedIds: string[]) {
+  const promises = orderedIds.map((id, index) =>
+    supabase.from("collections").update({ sort_order: index }).eq("id", id)
+  );
+  await Promise.all(promises);
+}
+
 export async function deleteAllData() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
