@@ -1274,6 +1274,8 @@ const ja: Record<string, string> = {
   "charts.rising": "上昇",
   "charts.falling": "下降",
   "charts.stable": "安定",
+  "dashboard.streak": "{n}日連続 🔥",
+  "dashboard.streakNone": "まだ連続記録なし",
 };
 
 const ko: Record<string, string> = {
