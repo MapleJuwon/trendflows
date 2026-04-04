@@ -69,6 +69,7 @@ export async function fetchCollections(): Promise<DataCollection[]> {
     createdAt: c.created_at,
     updatedAt: c.updated_at,
     archived: c.archived,
+    sortOrder: c.sort_order ?? 0,
   }));
 }
 
