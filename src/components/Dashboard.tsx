@@ -32,6 +32,22 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
 
   const collections = allCollections.filter(c => !c.archived);
 
+  const streak = useMemo(() => {
+    const allDates = new Set<string>();
+    allCollections.forEach(c => c.entries.forEach(e => allDates.add(e.date)));
+    if (allDates.size === 0) return 0;
+    let count = 0;
+    const today = new Date();
+    for (let i = 0; i < 9999; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      if (allDates.has(key)) count++;
+      else break;
+    }
+    return count;
+  }, [allCollections]);
+
   const formatDate = (iso: string) => {
     const d = new Date(iso);
     const now = new Date();
