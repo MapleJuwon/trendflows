@@ -1432,6 +1432,8 @@ const ko: Record<string, string> = {
   "charts.rising": "상승",
   "charts.falling": "하락",
   "charts.stable": "안정",
+  "dashboard.streak": "{n}일 연속 🔥",
+  "dashboard.streakNone": "아직 연속 기록 없음",
 };
 
 const translations: Record<string, Record<string, string>> = { de, en, zh, es, pt, fr, ar, ja, ko };
