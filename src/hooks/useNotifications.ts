@@ -79,7 +79,8 @@ export function useDailyReminder() {
     const reminderHour = parseInt(localStorage.getItem(REMINDER_HOUR_KEY) || "20", 10);
     const currentHour = now.getHours();
     
-    if (currentHour !== reminderHour) return;
+    // Send if we're at or past the reminder hour (so it's never missed)
+    if (currentHour < reminderHour) return;
 
     const lastReminder = localStorage.getItem(LAST_REMINDER_KEY);
     const today = now.toISOString().split("T")[0];
