@@ -106,6 +106,7 @@ export async function createCollection(title: string, unit: string, color?: stri
     createdAt: data.created_at,
     updatedAt: data.updated_at,
     archived: data.archived,
+    sortOrder: data.sort_order ?? 0,
   };
 }
 
