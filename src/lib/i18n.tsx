@@ -484,6 +484,8 @@ const zh: Record<string, string> = {
   "charts.rising": "上升",
   "charts.falling": "下降",
   "charts.stable": "稳定",
+  "dashboard.streak": "{n} 天连续 🔥",
+  "dashboard.streakNone": "暂无连续记录",
 };
 
 const es: Record<string, string> = {
