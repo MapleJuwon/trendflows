@@ -326,6 +326,8 @@ const en: Record<string, string> = {
   "charts.rising": "rising",
   "charts.falling": "falling",
   "charts.stable": "stable",
+  "dashboard.streak": "{n} Day Streak 🔥",
+  "dashboard.streakNone": "No streak yet",
 };
 
 const zh: Record<string, string> = {
