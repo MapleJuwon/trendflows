@@ -147,12 +147,13 @@ export async function deleteCollection(collectionId: string) {
   await supabase.from("collections").delete().eq("id", collectionId);
 }
 
-export async function updateCollection(collectionId: string, data: Partial<DataCollection>) {
+export async function updateCollection(collectionId: string, data: Partial<DataCollection> & { removeGoal?: boolean }) {
   const upd: { updated_at: string; title?: string; unit?: string; color?: string; goal_value?: number | null; archived?: boolean } = { updated_at: new Date().toISOString() };
   if (data.title !== undefined) upd.title = data.title;
   if (data.unit !== undefined) upd.unit = data.unit;
   if (data.color !== undefined) upd.color = data.color;
   if (data.goalValue !== undefined) upd.goal_value = data.goalValue;
+  if (data.removeGoal) upd.goal_value = null;
   if (data.archived !== undefined) upd.archived = data.archived;
 
   await supabase.from("collections").update(upd).eq("id", collectionId);
