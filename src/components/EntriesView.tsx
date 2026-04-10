@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { deleteEntry, type DataCollection } from "@/lib/store";
+import { deleteEntry, updateCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
-import { Trash2, Search, Plus } from "lucide-react";
+import { Trash2, Search, Plus, Target } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { toast } from "sonner";
 import AddEntrySheet from "./AddEntrySheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface Props {
   refreshKey: number;
@@ -16,6 +18,8 @@ export default function EntriesView({ refreshKey }: Props) {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
+  const [editGoalCol, setEditGoalCol] = useState<DataCollection | null>(null);
+  const [goalInput, setGoalInput] = useState("");
 
   useEffect(() => { if (refreshKey > 0) refresh(); }, [refreshKey]);
 
@@ -57,6 +61,14 @@ export default function EntriesView({ refreshKey }: Props) {
           <button onClick={() => setShowSearch(!showSearch)} className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform">
             <Search className="w-4 h-4 text-muted-foreground" />
           </button>
+          {col && (
+            <button
+              onClick={() => { setEditGoalCol(col); setGoalInput(col.goalValue?.toString() || ""); }}
+              className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center active:scale-95 transition-transform"
+            >
+              <Target className="w-4 h-4 text-muted-foreground" />
+            </button>
+          )}
           {activeId && (
             <button onClick={() => setShowAddEntry(true)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center active:scale-95 transition-transform">
               <Plus className="w-4 h-4 text-primary-foreground" />
@@ -80,6 +92,24 @@ export default function EntriesView({ refreshKey }: Props) {
         ))}
       </div>
 
+      {/* Goal info bar */}
+      {col && (
+        <button
+          onClick={() => { setEditGoalCol(col); setGoalInput(col.goalValue?.toString() || ""); }}
+          className="w-full mb-4 p-3 rounded-xl bg-card card-shadow flex items-center justify-between active:scale-[0.98] transition-transform"
+        >
+          <div className="flex items-center gap-2">
+            <Target className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-foreground font-medium">
+              {col.goalValue
+                ? `${t("dashboard.editGoal")}: ${col.goalValue} ${col.unit}`
+                : t("dashboard.setGoal")}
+            </span>
+          </div>
+          <span className="text-xs text-muted-foreground">✎</span>
+        </button>
+      )}
+
       <div className="space-y-2">
         {filtered.length === 0 && <p className="text-center text-muted-foreground text-sm py-10">{t("entries.notFound")}</p>}
         {filtered.map((entry, i) => (
@@ -101,6 +131,59 @@ export default function EntriesView({ refreshKey }: Props) {
       {activeId && (
         <AddEntrySheet collectionId={activeId} open={showAddEntry} onOpenChange={setShowAddEntry} />
       )}
+
+      {/* Edit Goal Sheet */}
+      <Sheet open={!!editGoalCol} onOpenChange={(o) => !o && setEditGoalCol(null)}>
+        <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-10">
+          <SheetHeader className="mb-5">
+            <SheetTitle className="text-display text-lg">
+              {t("dashboard.editGoal")} – {editGoalCol?.title}
+            </SheetTitle>
+          </SheetHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-foreground mb-1.5 block">
+                {t("dashboard.goalValue")} ({editGoalCol?.unit})
+              </label>
+              <input
+                type="number"
+                value={goalInput}
+                onChange={e => setGoalInput(e.target.value)}
+                placeholder={t("collection.goalPlaceholder")}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
+              />
+            </div>
+            <button
+              onClick={async () => {
+                if (!editGoalCol) return;
+                const val = parseFloat(goalInput);
+                if (isNaN(val) || val <= 0) { toast.error(t("common.error")); return; }
+                await updateCollection(editGoalCol.id, { goalValue: val });
+                toast.success(t("dashboard.goalUpdated"));
+                setEditGoalCol(null);
+                refresh();
+              }}
+              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold text-sm active:scale-[0.98] transition-transform card-shadow"
+            >
+              {t("common.save")}
+            </button>
+            {editGoalCol?.goalValue && (
+              <button
+                onClick={async () => {
+                  if (!editGoalCol) return;
+                  await updateCollection(editGoalCol.id, { removeGoal: true });
+                  toast.success(t("dashboard.goalRemoved"));
+                  setEditGoalCol(null);
+                  refresh();
+                }}
+                className="w-full h-10 rounded-xl border border-destructive text-destructive font-medium text-sm active:scale-[0.98] transition-transform"
+              >
+                {t("dashboard.removeGoal")}
+              </button>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
