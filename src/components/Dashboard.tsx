@@ -169,8 +169,6 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
   const [localOrder, setLocalOrder] = useState<DataCollection[]>([]);
-  const [editGoalCol, setEditGoalCol] = useState<DataCollection | null>(null);
-  const [goalInput, setGoalInput] = useState("");
 
   const collections = useMemo(() => allCollections.filter(c => !c.archived), [allCollections]);
 
