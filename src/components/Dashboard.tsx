@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus, Trash2, Flame, GripVertical } from "lucide-react";
-import { getStats, deleteCollection, updateCollectionOrder, type DataCollection } from "@/lib/store";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2, Flame, GripVertical, Target } from "lucide-react";
+import { getStats, deleteCollection, updateCollectionOrder, updateCollection, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useI18n } from "@/lib/i18n";
 import { toast } from "sonner";
 import AddEntrySheet from "./AddEntrySheet";
 import CreateCollectionSheet from "./CreateCollectionSheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   DndContext,
   closestCenter,
