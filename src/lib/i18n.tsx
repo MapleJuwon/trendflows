@@ -170,6 +170,12 @@ const de = {
   "charts.stable": "stabil",
   "dashboard.streak": "{n} Tage Streak 🔥",
   "dashboard.streakNone": "Noch kein Streak",
+  "dashboard.editGoal": "Ziel bearbeiten",
+  "dashboard.goalValue": "Zielwert",
+  "dashboard.removeGoal": "Ziel entfernen",
+  "dashboard.goalUpdated": "Ziel aktualisiert",
+  "dashboard.goalRemoved": "Ziel entfernt",
+  "dashboard.setGoal": "Ziel setzen",
 } as const;
 
 const en: Record<string, string> = {
@@ -328,6 +334,12 @@ const en: Record<string, string> = {
   "charts.stable": "stable",
   "dashboard.streak": "{n} Day Streak 🔥",
   "dashboard.streakNone": "No streak yet",
+  "dashboard.editGoal": "Edit goal",
+  "dashboard.goalValue": "Goal value",
+  "dashboard.removeGoal": "Remove goal",
+  "dashboard.goalUpdated": "Goal updated",
+  "dashboard.goalRemoved": "Goal removed",
+  "dashboard.setGoal": "Set goal",
 };
 
 const zh: Record<string, string> = {
