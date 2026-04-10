@@ -37,6 +37,7 @@ function SortableCollectionCard({
   onOpen,
   onDelete,
   onQuickAdd,
+  onEditGoal,
   formatDate,
   t,
 }: {
@@ -45,6 +46,7 @@ function SortableCollectionCard({
   onOpen: (id: string) => void;
   onDelete: (e: React.MouseEvent, col: DataCollection) => void;
   onQuickAdd: (id: string) => void;
+  onEditGoal: (col: DataCollection) => void;
   formatDate: (iso: string) => string;
   t: (key: string, vars?: Record<string, unknown>) => string;
 }) {
