@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Sun, Moon, Globe, Bell, Shield, Download, Upload, HelpCircle, ChevronRight, Check, Trash2, MessageCircle, FileText, Image, FileSpreadsheet, Loader2, Clock } from "lucide-react";
-import { requestNotificationPermission, canNotify } from "@/hooks/useNotifications";
+import { requestNotificationPermission, canNotify, getReminderHours, setReminderHours } from "@/hooks/useNotifications";
 import { useI18n, type Lang, LANG_LABELS } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { fetchCollections, deleteAllData, createCollection, addEntry, COLORS } from "@/lib/store";
@@ -404,14 +404,27 @@ function NotificationToggle({ label, desc, storageKey }: { label: string; desc: 
 
 function ReminderTimePicker() {
   const { t } = useI18n();
-  const [hour, setHour] = useState(() => parseInt(localStorage.getItem("trendflow_reminder_hour") || "20", 10));
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const h = parseInt(e.target.value, 10);
-    setHour(h);
-    localStorage.setItem("trendflow_reminder_hour", String(h));
+  const [hours, setHours] = useState<number[]>(() => getReminderHours());
+  const [adding, setAdding] = useState(false);
+  const [newHour, setNewHour] = useState(8);
+
+  const removeHour = (h: number) => {
+    const next = hours.filter(x => x !== h);
+    if (next.length === 0) return; // keep at least one
+    setHours(next);
+    setReminderHours(next);
   };
+
+  const addHour = () => {
+    if (hours.includes(newHour)) { setAdding(false); return; }
+    const next = [...hours, newHour].sort((a, b) => a - b);
+    setHours(next);
+    setReminderHours(next);
+    setAdding(false);
+  };
+
   return (
-    <div className="w-full p-4 rounded-xl bg-muted flex items-center justify-between">
+    <div className="w-full p-4 rounded-xl bg-muted space-y-3">
       <div className="flex items-center gap-3">
         <Clock className="w-4 h-4 text-muted-foreground" />
         <div>
@@ -419,12 +432,38 @@ function ReminderTimePicker() {
           <p className="text-xs text-muted-foreground">{t("notifications.reminderTimeDesc")}</p>
         </div>
       </div>
-      <select value={hour} onChange={handleChange}
-        className="bg-card text-foreground text-sm rounded-lg px-2 py-1 border border-border focus:outline-none focus:ring-2 focus:ring-ring">
-        {Array.from({ length: 24 }, (_, i) => (
-          <option key={i} value={i}>{String(i).padStart(2, "0")}:00</option>
+      <div className="flex flex-wrap gap-2">
+        {hours.map(h => (
+          <span key={h} className="inline-flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-1.5 text-sm font-medium text-foreground">
+            {String(h).padStart(2, "0")}:00
+            {hours.length > 1 && (
+              <button onClick={() => removeHour(h)} className="text-muted-foreground hover:text-destructive transition-colors ml-0.5">
+                ✕
+              </button>
+            )}
+          </span>
         ))}
-      </select>
+        {!adding && (
+          <button onClick={() => setAdding(true)}
+            className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-primary/20 transition-colors">
+            + Hinzufügen
+          </button>
+        )}
+      </div>
+      {adding && (
+        <div className="flex items-center gap-2">
+          <select value={newHour} onChange={e => setNewHour(parseInt(e.target.value, 10))}
+            className="bg-card text-foreground text-sm rounded-lg px-2 py-1.5 border border-border focus:outline-none focus:ring-2 focus:ring-ring">
+            {Array.from({ length: 24 }, (_, i) => (
+              <option key={i} value={i} disabled={hours.includes(i)}>{String(i).padStart(2, "0")}:00</option>
+            ))}
+          </select>
+          <button onClick={addHour} className="bg-primary text-primary-foreground text-sm font-medium rounded-lg px-3 py-1.5">
+            <Check className="w-4 h-4" />
+          </button>
+          <button onClick={() => setAdding(false)} className="text-muted-foreground text-sm px-2 py-1.5">✕</button>
+        </div>
+      )}
     </div>
   );
 }

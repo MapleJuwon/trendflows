@@ -2,8 +2,23 @@ import { useEffect, useCallback, useRef } from "react";
 import { useCollections } from "./useCollections";
 import { useI18n } from "@/lib/i18n";
 
-const LAST_REMINDER_KEY = "trendflow_last_reminder";
-const REMINDER_HOUR_KEY = "trendflow_reminder_hour";
+const LAST_REMINDERS_KEY = "trendflow_last_reminders"; // JSON: { "2026-04-10": [8, 20] }
+const REMINDER_HOURS_KEY = "trendflow_reminder_hours"; // JSON array e.g. [8, 20]
+
+export function getReminderHours(): number[] {
+  try {
+    const raw = localStorage.getItem(REMINDER_HOURS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed.sort((a: number, b: number) => a - b);
+    }
+  } catch {}
+  return [20]; // default
+}
+
+export function setReminderHours(hours: number[]) {
+  localStorage.setItem(REMINDER_HOURS_KEY, JSON.stringify([...new Set(hours)].sort((a, b) => a - b)));
+}
 
 export function requestNotificationPermission(): Promise<boolean> {
   if (!("Notification" in window)) return Promise.resolve(false);
@@ -65,7 +80,25 @@ export function notifyGoalReached(collectionTitle: string, value: number, goalVa
   sendNotification(titles[lang] || titles.en, bodies[lang] || bodies.en);
 }
 
-/** Hook: checks daily reminder schedule */
+function getSentHoursToday(): number[] {
+  try {
+    const raw = localStorage.getItem(LAST_REMINDERS_KEY);
+    if (!raw) return [];
+    const data = JSON.parse(raw);
+    const today = new Date().toISOString().split("T")[0];
+    return Array.isArray(data[today]) ? data[today] : [];
+  } catch { return []; }
+}
+
+function markHourSent(hour: number) {
+  const today = new Date().toISOString().split("T")[0];
+  // Only keep today's data
+  const sent = getSentHoursToday();
+  sent.push(hour);
+  localStorage.setItem(LAST_REMINDERS_KEY, JSON.stringify({ [today]: sent }));
+}
+
+/** Hook: checks daily reminder schedule (supports multiple times) */
 export function useDailyReminder() {
   const { collections } = useCollections();
   const { lang } = useI18n();
@@ -76,18 +109,16 @@ export function useDailyReminder() {
     if (localStorage.getItem("trendflow_notif_daily") !== "true") return;
 
     const now = new Date();
-    const reminderHour = parseInt(localStorage.getItem(REMINDER_HOUR_KEY) || "20", 10);
     const currentHour = now.getHours();
-    
-    // Send if we're at or past the reminder hour (so it's never missed)
-    if (currentHour < reminderHour) return;
+    const hours = getReminderHours();
+    const sentToday = getSentHoursToday();
 
-    const lastReminder = localStorage.getItem(LAST_REMINDER_KEY);
-    const today = now.toISOString().split("T")[0];
-    if (lastReminder === today) return;
+    // Find hours that are due (currentHour >= hour) and not yet sent
+    const dueHours = hours.filter(h => currentHour >= h && !sentToday.includes(h));
+    if (dueHours.length === 0) return;
 
     // Check if user already logged today
-    const todayStr = today;
+    const todayStr = now.toISOString().split("T")[0];
     const hasLoggedToday = collections.some((c) =>
       c.entries.some((e) => e.date === todayStr)
     );
@@ -117,13 +148,14 @@ export function useDailyReminder() {
       ko: "오늘 아직 데이터를 기록하지 않았어요. 지금 기록하세요!",
     };
 
+    // Send one notification and mark all due hours as sent
     sendNotification(titles[lang] || titles.en, bodies[lang] || bodies.en);
-    localStorage.setItem(LAST_REMINDER_KEY, today);
+    dueHours.forEach(h => markHourSent(h));
   }, [collections, lang]);
 
   useEffect(() => {
     checkReminder();
-    intervalRef.current = setInterval(checkReminder, 60_000); // check every minute
+    intervalRef.current = setInterval(checkReminder, 60_000);
     return () => clearInterval(intervalRef.current);
   }, [checkReminder]);
 }
