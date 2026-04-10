@@ -291,7 +291,6 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                   onOpen={onOpenCollection}
                   onDelete={handleDelete}
                   onQuickAdd={(id) => setQuickAddId(id)}
-                  onEditGoal={(col) => { setEditGoalCol(col); setGoalInput(col.goalValue?.toString() || ""); }}
                   formatDate={formatDate}
                   t={t}
                 />
@@ -305,59 +304,6 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
       {quickAddId && (
         <AddEntrySheet collectionId={quickAddId} open={!!quickAddId} onOpenChange={(open) => !open && setQuickAddId(null)} />
       )}
-
-      {/* Edit Goal Sheet */}
-      <Sheet open={!!editGoalCol} onOpenChange={(o) => !o && setEditGoalCol(null)}>
-        <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-10">
-          <SheetHeader className="mb-5">
-            <SheetTitle className="text-display text-lg">
-              {t("dashboard.editGoal")} – {editGoalCol?.title}
-            </SheetTitle>
-          </SheetHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-foreground mb-1.5 block">
-                {t("dashboard.goalValue")} ({editGoalCol?.unit})
-              </label>
-              <input
-                type="number"
-                value={goalInput}
-                onChange={e => setGoalInput(e.target.value)}
-                placeholder={t("collection.goalPlaceholder")}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
-              />
-            </div>
-            <button
-              onClick={async () => {
-                if (!editGoalCol) return;
-                const val = parseFloat(goalInput);
-                if (isNaN(val) || val <= 0) { toast.error(t("common.error")); return; }
-                await updateCollection(editGoalCol.id, { goalValue: val });
-                toast.success(t("dashboard.goalUpdated"));
-                setEditGoalCol(null);
-                refresh();
-              }}
-              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold text-sm active:scale-[0.98] transition-transform card-shadow"
-            >
-              {t("common.save")}
-            </button>
-            {editGoalCol?.goalValue && (
-              <button
-                onClick={async () => {
-                  if (!editGoalCol) return;
-                  await updateCollection(editGoalCol.id, { removeGoal: true });
-                  toast.success(t("dashboard.goalRemoved"));
-                  setEditGoalCol(null);
-                  refresh();
-                }}
-                className="w-full h-10 rounded-xl border border-destructive text-destructive font-medium text-sm active:scale-[0.98] transition-transform"
-              >
-                {t("dashboard.removeGoal")}
-              </button>
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
     </div>
   );
 }
