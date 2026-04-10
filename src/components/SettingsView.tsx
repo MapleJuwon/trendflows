@@ -446,7 +446,7 @@ function ReminderTimePicker() {
         {!adding && (
           <button onClick={() => setAdding(true)}
             className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-primary/20 transition-colors">
-            + {t("notifications.addTime") || "Hinzufügen"}
+            + Hinzufügen
           </button>
         )}
       </div>
