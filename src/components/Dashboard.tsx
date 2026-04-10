@@ -142,14 +142,17 @@ function SortableCollectionCard({
         {col.goalValue && stats ? (() => {
           const percent = Math.min(100, Math.round((stats.latest.value / col.goalValue) * 100));
           return (
-            <div className="mt-3">
+            <div className="mt-3" onClick={e => { e.stopPropagation(); onEditGoal(col); }}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] font-medium text-muted-foreground">
                   {t("dashboard.goalProgress", { percent })}
                 </span>
-                <span className="text-[10px] text-muted-foreground tabular-nums">
-                  {stats.latest.value} / {col.goalValue} {col.unit}
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] text-muted-foreground tabular-nums">
+                    {stats.latest.value} / {col.goalValue} {col.unit}
+                  </span>
+                  <Target className="w-3 h-3 text-muted-foreground" />
+                </div>
               </div>
               <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                 <div
@@ -159,7 +162,15 @@ function SortableCollectionCard({
               </div>
             </div>
           );
-        })() : null}
+        })() : (
+          <button
+            onClick={e => { e.stopPropagation(); onEditGoal(col); }}
+            className="mt-2 flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Target className="w-3 h-3" />
+            {t("dashboard.setGoal")}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -172,6 +183,8 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
   const [showCreate, setShowCreate] = useState(false);
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
   const [localOrder, setLocalOrder] = useState<DataCollection[]>([]);
+  const [editGoalCol, setEditGoalCol] = useState<DataCollection | null>(null);
+  const [goalInput, setGoalInput] = useState("");
 
   const collections = useMemo(() => allCollections.filter(c => !c.archived), [allCollections]);
 
@@ -294,6 +307,7 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
                   onOpen={onOpenCollection}
                   onDelete={handleDelete}
                   onQuickAdd={(id) => setQuickAddId(id)}
+                  onEditGoal={(col) => { setEditGoalCol(col); setGoalInput(col.goalValue?.toString() || ""); }}
                   formatDate={formatDate}
                   t={t}
                 />
@@ -307,6 +321,59 @@ export default function Dashboard({ onOpenCollection, refreshKey }: DashboardPro
       {quickAddId && (
         <AddEntrySheet collectionId={quickAddId} open={!!quickAddId} onOpenChange={(open) => !open && setQuickAddId(null)} />
       )}
+
+      {/* Edit Goal Sheet */}
+      <Sheet open={!!editGoalCol} onOpenChange={(o) => !o && setEditGoalCol(null)}>
+        <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-10">
+          <SheetHeader className="mb-5">
+            <SheetTitle className="text-display text-lg">
+              {t("dashboard.editGoal")} – {editGoalCol?.title}
+            </SheetTitle>
+          </SheetHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-foreground mb-1.5 block">
+                {t("dashboard.goalValue")} ({editGoalCol?.unit})
+              </label>
+              <input
+                type="number"
+                value={goalInput}
+                onChange={e => setGoalInput(e.target.value)}
+                placeholder={t("collection.goalPlaceholder")}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
+              />
+            </div>
+            <button
+              onClick={async () => {
+                if (!editGoalCol) return;
+                const val = parseFloat(goalInput);
+                if (isNaN(val) || val <= 0) { toast.error(t("common.error")); return; }
+                await updateCollection(editGoalCol.id, { goalValue: val });
+                toast.success(t("dashboard.goalUpdated"));
+                setEditGoalCol(null);
+                refresh();
+              }}
+              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold text-sm active:scale-[0.98] transition-transform card-shadow"
+            >
+              {t("common.save")}
+            </button>
+            {editGoalCol?.goalValue && (
+              <button
+                onClick={async () => {
+                  if (!editGoalCol) return;
+                  await updateCollection(editGoalCol.id, { removeGoal: true });
+                  toast.success(t("dashboard.goalRemoved"));
+                  setEditGoalCol(null);
+                  refresh();
+                }}
+                className="w-full h-10 rounded-xl border border-destructive text-destructive font-medium text-sm active:scale-[0.98] transition-transform"
+              >
+                {t("dashboard.removeGoal")}
+              </button>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
