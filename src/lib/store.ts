@@ -129,7 +129,7 @@ export async function addEntry(collectionId: string, date: string, value: number
 }
 
 export async function updateEntry(collectionId: string, entryId: string, updates: Partial<DataEntry>) {
-  const upd: Record<string, unknown> = {};
+  const upd: { date?: string; value?: number; note?: string | null } = {};
   if (updates.date !== undefined) upd.date = updates.date;
   if (updates.value !== undefined) upd.value = updates.value;
   if (updates.note !== undefined) upd.note = updates.note || null;
@@ -148,7 +148,7 @@ export async function deleteCollection(collectionId: string) {
 }
 
 export async function updateCollection(collectionId: string, data: Partial<DataCollection>) {
-  const upd: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  const upd: { updated_at: string; title?: string; unit?: string; color?: string; goal_value?: number | null; archived?: boolean } = { updated_at: new Date().toISOString() };
   if (data.title !== undefined) upd.title = data.title;
   if (data.unit !== undefined) upd.unit = data.unit;
   if (data.color !== undefined) upd.color = data.color;
