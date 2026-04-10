@@ -1,13 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Plus, TrendingUp, TrendingDown, Minus, Trash2, Flame, GripVertical, Target } from "lucide-react";
-import { getStats, deleteCollection, updateCollectionOrder, updateCollection, type DataCollection } from "@/lib/store";
+import { Plus, TrendingUp, TrendingDown, Minus, Trash2, Flame, GripVertical } from "lucide-react";
+import { getStats, deleteCollection, updateCollectionOrder, type DataCollection } from "@/lib/store";
 import { useCollections } from "@/hooks/useCollections";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useI18n } from "@/lib/i18n";
 import { toast } from "sonner";
 import AddEntrySheet from "./AddEntrySheet";
 import CreateCollectionSheet from "./CreateCollectionSheet";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   DndContext,
   closestCenter,
@@ -37,7 +36,6 @@ function SortableCollectionCard({
   onOpen,
   onDelete,
   onQuickAdd,
-  onEditGoal,
   formatDate,
   t,
 }: {
@@ -46,7 +44,6 @@ function SortableCollectionCard({
   onOpen: (id: string) => void;
   onDelete: (e: React.MouseEvent, col: DataCollection) => void;
   onQuickAdd: (id: string) => void;
-  onEditGoal: (col: DataCollection) => void;
   formatDate: (iso: string) => string;
   t: (key: string, vars?: Record<string, unknown>) => string;
 }) {
@@ -142,17 +139,14 @@ function SortableCollectionCard({
         {col.goalValue && stats ? (() => {
           const percent = Math.min(100, Math.round((stats.latest.value / col.goalValue) * 100));
           return (
-            <div className="mt-3" onClick={e => { e.stopPropagation(); onEditGoal(col); }}>
+            <div className="mt-3">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] font-medium text-muted-foreground">
                   {t("dashboard.goalProgress", { percent })}
                 </span>
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] text-muted-foreground tabular-nums">
-                    {stats.latest.value} / {col.goalValue} {col.unit}
-                  </span>
-                  <Target className="w-3 h-3 text-muted-foreground" />
-                </div>
+                <span className="text-[10px] text-muted-foreground tabular-nums">
+                  {stats.latest.value} / {col.goalValue} {col.unit}
+                </span>
               </div>
               <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                 <div
@@ -162,15 +156,7 @@ function SortableCollectionCard({
               </div>
             </div>
           );
-        })() : (
-          <button
-            onClick={e => { e.stopPropagation(); onEditGoal(col); }}
-            className="mt-2 flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Target className="w-3 h-3" />
-            {t("dashboard.setGoal")}
-          </button>
-        )}
+        })() : null}
       </div>
     </div>
   );
